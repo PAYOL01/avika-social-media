@@ -1,670 +1,144 @@
-
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="theme-color" content="#090910">
-<title>AVIKA Social</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#090812">
+<meta name="description" content="AVIKA — connect, share and discover">
+<title>AVIKA — Social World</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Outfit:wght@500;600;700;800;900&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
-*{box-sizing:border-box}
-body{margin:0;background:#090910;color:white;font-family:Arial,sans-serif}
-header{position:sticky;top:0;z-index:10;padding:14px 18px;background:#151522;border-bottom:1px solid #333;display:flex;justify-content:space-between;align-items:center}
-.logo{font-size:27px;font-weight:900;letter-spacing:3px;background:linear-gradient(90deg,#a855f7,#ec4899,#22d3ee);color:transparent;background-clip:text}
-main{max-width:620px;margin:15px auto;padding:10px;padding-bottom:90px}
-.card{background:#171725;border:1px solid #33334a;border-radius:17px;padding:16px;margin:13px 0}
-input,textarea,select{width:100%;padding:12px;margin:6px 0;background:#252538;border:1px solid #44445b;border-radius:10px;color:white;font-size:15px}
-textarea{min-height:75px;resize:vertical}
-button{padding:11px 14px;border:0;border-radius:10px;background:linear-gradient(90deg,#9333ea,#db2777);color:white;font-weight:bold;cursor:pointer;margin:4px}
-button:disabled{opacity:.5}
-.secondary{background:#343449}
-.full{width:100%}
-.muted{color:#aaa;font-size:13px;text-align:center}
-#status{padding:8px;text-align:center;color:#e9a5ff;font-size:13px}
-#auth{display:block}
-#app{display:none}
-.page{display:none}
-.page.active{display:block}
-nav{position:fixed;bottom:0;left:0;right:0;z-index:20;display:flex;justify-content:space-around;background:#171725;border-top:1px solid #444;padding:8px 2px calc(8px + env(safe-area-inset-bottom))}
-nav button{background:none;color:#bbb;margin:0;padding:7px 4px;font-size:11px}
-nav button.active{color:#e879f9}
-.post-img{width:100%;max-height:550px;object-fit:contain;background:#050505;border-radius:12px;margin-top:8px}
-.post-head{display:flex;align-items:center;gap:10px}
-.avatar{width:38px;height:38px;border-radius:50%;object-fit:cover;background:#555}
-.username{font-weight:bold}
-.post-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
-.story-row{display:flex;gap:12px;overflow-x:auto;padding:10px 0}
-.story-item{min-width:70px;text-align:center;font-size:12px}
-.story-ring{width:62px;height:62px;border-radius:50%;padding:3px;background:linear-gradient(45deg,#f59e0b,#ec4899,#9333ea);margin:auto}
-.story-ring img{width:100%;height:100%;border-radius:50%;object-fit:cover;border:2px solid #171725}
-.result{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:10px 0;border-bottom:1px solid #333}
-#camera{width:100%;border-radius:12px;background:#000;max-height:60vh}
-#preview img,#preview video{width:100%;border-radius:12px}
-.small{font-size:12px;color:#aaa}
+:root{color-scheme:dark;--bg:#090812;--panel:#13111f;--panel2:#1b1829;--text:#f8f6ff;--muted:#a49eb7;--line:#302b42;--accent:#a855f7;--pink:#ec4899;--cyan:#67e8f9;--shadow:0 18px 55px #0005;--nav:rgba(19,17,31,.92)}
+:root[data-theme="light"]{color-scheme:light;--bg:#f6f4fb;--panel:#fff;--panel2:#f0edf7;--text:#211a31;--muted:#777087;--line:#e5deef;--accent:#8b35d5;--pink:#db3988;--cyan:#0891b2;--shadow:0 18px 45px #4b326015;--nav:rgba(255,255,255,.92)}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--text);font-family:"DM Sans",sans-serif;min-height:100vh}button,input,textarea,select{font:inherit}button{cursor:pointer;border:0}.hidden{display:none!important}.muted{color:var(--muted)}.small{font-size:12px;color:var(--muted)}.brand{font:900 29px Outfit,sans-serif;letter-spacing:3px;background:linear-gradient(100deg,var(--accent),var(--pink),var(--cyan));color:transparent;background-clip:text}.topbar{height:70px;position:sticky;top:0;z-index:30;display:flex;align-items:center;justify-content:space-between;padding:0 max(18px,calc((100vw - 1180px)/2));background:var(--nav);backdrop-filter:blur(18px);border-bottom:1px solid var(--line)}.top-actions{display:flex;gap:9px;align-items:center}.icon-btn,.soft-btn{background:var(--panel2);color:var(--text);border:1px solid var(--line);border-radius:13px;padding:10px 13px}.primary{background:linear-gradient(110deg,var(--accent),var(--pink));color:#fff;border-radius:13px;padding:12px 17px;font-weight:800;box-shadow:0 8px 24px #a855f733}.primary:disabled{opacity:.55;cursor:wait}.shell{max-width:1180px;margin:24px auto;padding:0 18px 100px;display:grid;grid-template-columns:220px minmax(0,640px) 270px;gap:22px;align-items:start}.side{position:sticky;top:92px}.side-menu{background:var(--panel);border:1px solid var(--line);border-radius:20px;padding:12px;box-shadow:var(--shadow)}.navitem{width:100%;display:flex;align-items:center;gap:13px;padding:13px 14px;border-radius:13px;background:transparent;color:var(--muted);text-align:left;font-weight:700;margin:2px 0}.navitem:hover,.navitem.active{background:var(--panel2);color:var(--text)}.navitem.active{outline:1px solid #a855f744}.navicon{width:23px;text-align:center;font-size:19px}.card{background:var(--panel);border:1px solid var(--line);border-radius:20px;padding:18px;margin-bottom:16px;box-shadow:var(--shadow)}.card h2,.card h3{font-family:Outfit,sans-serif;margin:0 0 13px}.page{display:none}.page.active{display:block}.field{width:100%;background:var(--panel2);color:var(--text);border:1px solid var(--line);border-radius:12px;padding:13px 14px;margin:6px 0;outline:none}.field:focus{border-color:var(--accent);box-shadow:0 0 0 3px #a855f722}textarea.field{min-height:90px;resize:vertical}.full{width:100%;margin-top:9px}.auth-wrap{max-width:440px;margin:7vh auto;padding:18px}.auth-card{background:var(--panel);border:1px solid var(--line);border-radius:26px;padding:28px;box-shadow:var(--shadow)}.auth-logo{text-align:center;margin-bottom:12px}.auth-logo .brand{font-size:42px}.auth-card h1{text-align:center;font:800 25px Outfit;margin:12px 0 4px}.auth-card .muted{text-align:center}.link-btn{background:none;color:var(--accent);font-weight:700;padding:8px}.status{position:fixed;top:78px;left:50%;transform:translateX(-50%);z-index:80;background:var(--panel2);border:1px solid var(--line);border-radius:999px;padding:10px 16px;box-shadow:var(--shadow);max-width:90%;font-size:13px}.stories{display:flex;gap:14px;overflow:auto;padding:4px 0 10px}.story{flex:0 0 74px;text-align:center;font-size:12px;cursor:pointer}.ring{width:66px;height:66px;margin:auto auto 6px;padding:3px;border-radius:50%;background:linear-gradient(135deg,#f59e0b,var(--pink),var(--accent))}.ring img{width:100%;height:100%;object-fit:cover;border-radius:50%;border:3px solid var(--panel);background:var(--panel2)}.post{padding:0;overflow:hidden}.post-head{display:flex;align-items:center;gap:11px;padding:15px 17px}.avatar{width:42px;height:42px;border-radius:50%;object-fit:cover;background:var(--panel2);border:1px solid var(--line)}.post-media{display:block;width:100%;max-height:650px;object-fit:contain;background:#050408}.post-body{padding:14px 17px 17px}.post-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}.action{background:var(--panel2);border:1px solid var(--line);color:var(--text);border-radius:11px;padding:9px 12px;font-weight:700}.action.liked{color:#f472b6}.caption{white-space:pre-wrap;overflow-wrap:anywhere;margin:9px 0}.story-add{border:1px dashed var(--line);background:var(--panel2);border-radius:15px;padding:12px;color:var(--text);min-width:90px}.row{display:flex;align-items:center;gap:10px}.between{justify-content:space-between}.grow{flex:1;min-width:0}.user-result{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 0;border-bottom:1px solid var(--line)}.user-result:last-child{border:0}.stats{display:flex;justify-content:center;gap:24px;text-align:center;margin:18px 0}.stats b{display:block;font:800 20px Outfit}.profile-cover{height:100px;border-radius:15px;background:linear-gradient(110deg,#6d28d9,#db2777,#0891b2);margin:-2px -2px 0}.profile-top{text-align:center;margin-top:-42px}.profile-top .avatar{width:88px;height:88px;border:4px solid var(--panel)}.grid-posts{display:grid;grid-template-columns:repeat(3,1fr);gap:5px}.grid-posts img,.grid-posts video{width:100%;aspect-ratio:1;object-fit:cover;background:var(--panel2);border-radius:8px}.chat-layout{display:grid;grid-template-columns:1fr;gap:12px}.messages{height:340px;overflow:auto;background:var(--panel2);border:1px solid var(--line);border-radius:15px;padding:12px}.bubble{max-width:82%;padding:10px 13px;border-radius:15px;margin:8px 0;background:var(--panel);overflow-wrap:anywhere}.bubble.mine{margin-left:auto;background:linear-gradient(120deg,#7e22ce,#be185d);color:white}.bottom-nav{display:none}.camera{width:100%;max-height:58vh;background:#050408;border-radius:16px;object-fit:contain}.pill{font-size:11px;background:var(--panel2);border:1px solid var(--line);padding:5px 9px;border-radius:999px;color:var(--muted)}.empty{text-align:center;padding:30px 12px;color:var(--muted)}.right-card{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:16px;margin-bottom:15px}.right-card h3{font:700 16px Outfit;margin:0 0 10px}.footer-note{font-size:11px;color:var(--muted);line-height:1.6}.modal{position:fixed;inset:0;background:#000b;z-index:90;display:grid;place-items:center;padding:18px}.modal-box{width:min(560px,100%);max-height:90vh;overflow:auto;background:var(--panel);border:1px solid var(--line);border-radius:20px;padding:18px}.close{float:right;background:var(--panel2);color:var(--text);border-radius:10px;padding:8px 11px}
+@media(max-width:980px){.shell{grid-template-columns:190px minmax(0,640px);max-width:900px}.rightcol{display:none}}
+@media(max-width:680px){.topbar{height:60px;padding:0 14px}.shell{display:block;margin:12px auto;padding:0 10px 100px}.side,.rightcol{display:none}.card{border-radius:17px;padding:15px}.post{padding:0}.bottom-nav{display:flex;position:fixed;z-index:50;bottom:0;left:0;right:0;justify-content:space-around;padding:8px 4px calc(8px + env(safe-area-inset-bottom));background:var(--nav);backdrop-filter:blur(18px);border-top:1px solid var(--line)}.bottom-nav button{background:none;color:var(--muted);font-size:11px;padding:5px 7px}.bottom-nav button.active{color:var(--accent)}.bottom-nav span{display:block;font-size:20px;margin-bottom:2px}.auth-wrap{margin:4vh auto}.brand{font-size:25px}}
 </style>
 </head>
 <body>
-
-<header>
- <div class="logo">AVIKA</div>
- <span>✨ Social World</span>
+<header class="topbar">
+ <div class="brand">AVIKA</div>
+ <div class="top-actions"><span class="pill">SOCIAL WORLD</span><button class="icon-btn" id="themeBtn" onclick="toggleTheme()" aria-label="Toggle theme">☀️</button><button class="icon-btn" onclick="go('notifications')" aria-label="Notifications">🔔</button></div>
 </header>
-<div id="status"></div>
+<div id="status" class="status hidden" role="status"></div>
 
-<main id="auth">
- <div class="card">
-  <h2 id="formTitle">Welcome to AVIKA</h2>
-  <p class="muted">Connect • Share • Enjoy</p>
-  <div id="signupFields" style="display:none">
-   <input id="fullName" placeholder="Your Full Name">
-   <input id="username" placeholder="Choose Username">
-  </div>
-  <input id="email" type="email" placeholder="Email Address">
-  <input id="password" type="password" placeholder="Password">
-  <button class="full" id="submitBtn" onclick="submitAuth()">Login</button>
-  <button class="full secondary" id="switchBtn" onclick="switchForm()">Create New Account</button>
- </div>
-</main>
-
-<div id="app">
-<main>
-
-<section class="page active" id="home">
- <div class="card">
-  <h3>🌈 Stories</h3>
-  <div class="story-row" id="storyList"></div>
-  <button class="full" onclick="go('create')">＋ Add Story</button>
- </div>
- <div class="card">
-  <h3>🏠 Home Feed</h3>
-  <button class="secondary" onclick="loadFeed()">↻ Refresh Feed</button>
-  <div id="feed"></div>
+<section id="auth" class="auth-wrap">
+ <div class="auth-card">
+  <div class="auth-logo"><div class="brand">AVIKA</div><div class="small">CONNECT • SHARE • DISCOVER</div></div>
+  <h1 id="formTitle">Welcome back</h1><p class="muted" id="formSubtitle">Login to continue your social world.</p>
+  <div id="signupFields" class="hidden"><input id="fullName" class="field" placeholder="Full name" autocomplete="name"><input id="username" class="field" placeholder="Username (3–20 letters)" autocomplete="username"></div>
+  <input id="email" class="field" type="email" placeholder="Email address" autocomplete="email">
+  <input id="password" class="field" type="password" placeholder="Password" autocomplete="current-password">
+  <button class="primary full" id="submitBtn" onclick="submitAuth()">Login</button>
+  <button class="link-btn full" id="forgotBtn" onclick="forgotPassword()">Forgot password?</button>
+  <button class="soft-btn full" id="switchBtn" onclick="switchForm()">Create a new account</button>
+  <p class="small" style="text-align:center;margin-top:18px">Your existing AVIKA account remains the same.</p>
  </div>
 </section>
 
-<section class="page" id="create">
- <div class="card">
-  <h2>➕ Create Post</h2>
-  <input id="postFile" type="file" accept="image/*,video/*">
-  <textarea id="postCaption" placeholder="Write a caption..."></textarea>
-  <button class="full" onclick="createPost()">Publish Post</button>
-  <p class="muted">Photos and videos are uploaded to AVIKA Storage.</p>
- </div>
- <div class="card">
-  <h2>🌈 Add Story</h2>
-  <input id="storyFile" type="file" accept="image/*,video/*">
-  <button class="full" onclick="createStory()">Share 24 Hour Story</button>
- </div>
-</section>
+<div id="app" class="hidden">
+ <div class="shell">
+  <aside class="side"><div class="side-menu">
+   <div class="brand" style="font-size:23px;padding:12px 14px">AVIKA</div>
+   <button class="navitem active" data-page="home" onclick="go('home',this)"><span class="navicon">⌂</span> Home</button>
+   <button class="navitem" data-page="search" onclick="go('search',this)"><span class="navicon">⌕</span> Explore</button>
+   <button class="navitem" data-page="reels" onclick="go('reels',this)"><span class="navicon">▶</span> Reels</button>
+   <button class="navitem" data-page="create" onclick="go('create',this)"><span class="navicon">＋</span> Create</button>
+   <button class="navitem" data-page="snap" onclick="go('snap',this)"><span class="navicon">◎</span> Camera</button>
+   <button class="navitem" data-page="chat" onclick="go('chat',this)"><span class="navicon">✉</span> Messages</button>
+   <button class="navitem" data-page="notifications" onclick="go('notifications',this)"><span class="navicon">♧</span> Notifications</button>
+   <button class="navitem" data-page="profile" onclick="go('profile',this)"><span class="navicon">◉</span> Profile</button>
+   <button class="navitem" onclick="logout()"><span class="navicon">↪</span> Log out</button>
+  </div></aside>
 
-<section class="page" id="search">
- <div class="card">
-  <h2>🔎 Discover People</h2>
-  <input id="searchInput" placeholder="Search username..." oninput="searchUsers()">
-  <div id="searchResults"></div>
+  <main>
+   <section class="page active" id="home">
+    <div class="card"><div class="row between"><h2>Stories</h2><span class="pill">24 HOURS</span></div><div class="stories" id="storyList"></div><button class="soft-btn full" onclick="go('create')">＋ Add to your story</button></div>
+    <div class="row between" style="margin:18px 3px"><div><h2 style="font:800 23px Outfit;margin:0">Your Feed</h2><div class="small">Fresh moments from your community</div></div><button class="soft-btn" onclick="loadFeed()">↻ Refresh</button></div>
+    <div id="feed"><div class="empty">Loading your feed…</div></div>
+   </section>
+
+   <section class="page" id="create">
+    <div class="card"><h2>Create a post</h2><p class="muted">Share a photo or video with your community.</p><input id="postFile" class="field" type="file" accept="image/*,video/*"><textarea id="postCaption" class="field" maxlength="2200" placeholder="Write a caption…"></textarea><button class="primary full" onclick="createPost()">Publish post</button></div>
+    <div class="card"><h2>Share a story</h2><p class="muted">Stories automatically expire after 24 hours.</p><input id="storyFile" class="field" type="file" accept="image/*,video/*"><button class="primary full" onclick="createStory()">Share story</button></div>
+   </section>
+
+   <section class="page" id="search"><div class="card"><h2>Explore people</h2><input id="searchInput" class="field" placeholder="Search by username…" oninput="searchUsers()"><div id="searchResults"></div></div></section>
+   <section class="page" id="reels"><div class="card"><div class="row between"><h2>Reels</h2><span class="pill">SHORT VIDEOS</span></div><p class="muted">Discover videos shared as posts. This view filters video posts from your existing feed.</p><div id="reelsFeed"></div></div></section>
+
+   <section class="page" id="snap"><div class="card"><div class="row between"><h2>AVIKA Camera</h2><span class="pill">SNAP STUDIO</span></div><video id="camera" class="camera" autoplay playsinline muted></video><div class="row"><button class="primary grow" onclick="startCamera()">Start camera</button><button class="soft-btn" onclick="flipCamera()">Flip</button></div><p class="small">Live filters</p><div class="post-actions"><button class="action" onclick="setFilter('none')">Normal</button><button class="action" onclick="setFilter('brightness(1.12) saturate(1.3)')">Glow</button><button class="action" onclick="setFilter('sepia(.55)')">Vintage</button><button class="action" onclick="setFilter('grayscale(1)')">B&W</button><button class="action" onclick="setFilter('saturate(1.8)')">Vivid</button><button class="action" onclick="setFilter('hue-rotate(45deg)')">Dream</button></div><p class="small">Stickers</p><div class="post-actions"><button class="action" onclick="setSticker('❤️')">❤️</button><button class="action" onclick="setSticker('🐶')">🐶</button><button class="action" onclick="setSticker('👑')">👑</button><button class="action" onclick="setSticker('😎')">😎</button><button class="action" onclick="setSticker('✨')">✨</button><button class="action" onclick="setSticker('')">Clear</button></div><input id="snapText" class="field" placeholder="Add text to your snap"><button class="primary full" onclick="captureSnap()">Capture photo</button><div id="preview"></div><p class="small">Camera access needs HTTPS and your permission. These are visual filters, not face-tracking AR effects.</p></div></section>
+
+   <section class="page" id="chat"><div class="card"><h2>Messages</h2><input id="chatSearch" class="field" placeholder="Find someone by username"><button class="soft-btn full" onclick="findChatUser()">Search people</button><div id="chatSearchResults"></div><div id="chatWindow" class="hidden"><div class="row between"><h3 id="chatWith"></h3><button class="soft-btn" onclick="chatUser=null;document.getElementById('chatWindow').classList.add('hidden')">Close</button></div><div id="messages" class="messages"></div><textarea id="chatMessage" class="field" placeholder="Write a message…"></textarea><button class="primary full" onclick="sendMessage()">Send message</button><button class="soft-btn full" onclick="refreshMessages()">Refresh messages</button></div></div></section>
+
+   <section class="page" id="notifications"><div class="card"><div class="row between"><h2>Notifications</h2><button class="soft-btn" onclick="loadNotifications()">Refresh</button></div><div id="notificationList"></div></div></section>
+
+   <section class="page" id="profile"><div class="card"><div class="profile-cover"></div><div class="profile-top"><img id="profileAvatar" class="avatar" src="https://placehold.co/160x160/30243e/ffffff?text=A"><h2 id="profileName" style="margin:8px 0 2px"></h2><div id="profileUsername" class="muted"></div><p id="profileBio"></p></div><div class="stats" id="profileStats"></div><hr style="border:0;border-top:1px solid var(--line)"><h3>Edit profile</h3><label class="small">Profile photo</label><input id="avatarFile" class="field" type="file" accept="image/*"><input id="editName" class="field" placeholder="Display name"><textarea id="editBio" class="field" maxlength="300" placeholder="Write your bio"></textarea><button class="primary full" onclick="saveProfile()">Save profile</button><h3 style="margin-top:24px">My posts</h3><div id="myPosts" class="grid-posts"></div><button class="soft-btn full" onclick="logout()">Log out</button></div></section>
+  </main>
+
+  <aside class="rightcol"><div class="right-card"><div class="row"><img id="miniAvatar" class="avatar" src="https://placehold.co/80x80/30243e/ffffff?text=A"><div class="grow"><b id="miniName">Your profile</b><div class="small" id="miniUsername"></div></div></div><button class="soft-btn full" onclick="go('profile')">View profile</button></div><div class="right-card"><h3>AVIKA Community</h3><p class="muted small">Share moments, discover creators and stay connected.</p><div class="footer-note">Be kind. Respect privacy. Only upload media you have permission to share. Public media may be viewable by anyone with its link.</div></div><div class="right-card"><h3>Quick links</h3><button class="navitem" onclick="go('create')">＋ Create a post</button><button class="navitem" onclick="go('snap')">◎ Open camera</button><button class="navitem" onclick="toggleTheme()">◐ Change appearance</button></div></aside>
  </div>
-</section>
-
-<section class="page" id="snap">
- <div class="card">
-  <h2>📸 AVIKA Camera</h2>
-  <video id="camera" autoplay playsinline muted></video>
-  <div class="post-actions">
-   <button onclick="startCamera()">Start Camera</button>
-   <button class="secondary" onclick="flipCamera()">Flip Camera</button>
-  </div>
-  <div class="small">Camera Filters</div>
-  <div class="post-actions">
-   <button class="secondary" onclick="setFilter('none')">Normal</button>
-   <button class="secondary" onclick="setFilter('brightness(1.15) saturate(1.3)')">Beauty</button>
-   <button class="secondary" onclick="setFilter('sepia(.6)')">Vintage</button>
-   <button class="secondary" onclick="setFilter('grayscale(1)')">B&W</button>
-   <button class="secondary" onclick="setFilter('saturate(1.8)')">Color</button>
-   <button class="secondary" onclick="setFilter('hue-rotate(40deg)')">Dream</button>
-  </div>
-  <div class="post-actions">
-   <button class="secondary" onclick="setSticker('❤️')">❤️</button>
-   <button class="secondary" onclick="setSticker('🐶')">🐶</button>
-   <button class="secondary" onclick="setSticker('👑')">👑</button>
-   <button class="secondary" onclick="setSticker('😎')">😎</button>
-   <button class="secondary" onclick="setSticker('✨')">✨</button>
-   <button class="secondary" onclick="setSticker('')">Clear Sticker</button>
-  </div>
-  <input id="snapText" placeholder="Add text to Snap">
-  <button class="full" onclick="captureSnap()">📸 Capture Photo</button>
-  <div id="preview"></div>
-  <p class="muted">Color filters and emoji overlays are supported. Advanced face-tracking AR filters require a separate AR engine.</p>
- </div>
-</section>
-
-<section class="page" id="chat">
- <div class="card">
-  <h2>💬 Private Chat</h2>
-  <input id="chatSearch" placeholder="Find a person by username">
-  <button onclick="findChatUser()">Search Person</button>
-  <div id="chatSearchResults"></div>
-  <div id="chatWindow" style="display:none">
-   <h3 id="chatWith"></h3>
-   <div id="messages" style="max-height:330px;overflow:auto"></div>
-   <textarea id="chatMessage" placeholder="Write a message..."></textarea>
-   <button class="full" onclick="sendMessage()">Send Message</button>
-   <button class="secondary" onclick="refreshMessages()">Refresh Messages</button>
-  </div>
- </div>
-</section>
-
-<section class="page" id="notifications">
- <div class="card">
-  <h2>🔔 Notifications</h2>
-  <button onclick="loadNotifications()">Refresh</button>
-  <div id="notificationList"></div>
- </div>
-</section>
-
-<section class="page" id="profile">
- <div class="card">
-  <h2>👤 My Profile</h2>
-  <p id="profileName" style="text-align:center;font-size:20px"></p>
-  <p id="profileUsername" class="muted"></p>
-  <p id="profileBio" style="text-align:center"></p>
-  <div id="profileStats" class="muted"></div>
-  <input id="editName" placeholder="Display Name">
-  <textarea id="editBio" placeholder="Write your bio"></textarea>
-  <button class="full" onclick="saveProfile()">Save Profile</button>
-  <h3>My Posts</h3>
-  <div id="myPosts"></div>
-  <button class="full secondary" onclick="logout()">Logout</button>
- </div>
-</section>
-
-</main>
-
-<nav>
- <button class="active" onclick="go('home',this)">🏠<br>Home</button>
- <button onclick="go('search',this)">🔎<br>Search</button>
- <button onclick="go('create',this)">➕<br>Create</button>
- <button onclick="go('snap',this)">📸<br>Snap</button>
- <button onclick="go('chat',this)">💬<br>Chat</button>
- <button onclick="go('notifications',this)">🔔<br>Alerts</button>
- <button onclick="go('profile',this)">👤<br>Profile</button>
-</nav>
+ <nav class="bottom-nav"><button class="active" onclick="go('home',this)"><span>⌂</span>Home</button><button onclick="go('search',this)"><span>⌕</span>Explore</button><button onclick="go('reels',this)"><span>▶</span>Reels</button><button onclick="go('create',this)"><span>＋</span>Create</button><button onclick="go('chat',this)"><span>✉</span>Chat</button><button onclick="go('profile',this)"><span>◉</span>Me</button></nav>
 </div>
+
+<div id="storyModal" class="modal hidden" onclick="if(event.target===this)closeStory()"><div class="modal-box"><button class="close" onclick="closeStory()">✕</button><div id="storyContent" style="clear:both;text-align:center;padding-top:12px"></div></div></div>
 
 <script>
 const SUPABASE_URL="https://csarrgheuzybigifblny.supabase.co";
 const SUPABASE_KEY="sb_publishable_KAryjB40BugD0vSss4sj6Q_ohRhWvr8";
 const db=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
-
-let currentUser=null;
-let myProfile=null;
-let isSignup=false;
-let cameraStream=null;
-let cameraFacing='user';
-let cameraFilter='none';
-let sticker='';
-let chatUser=null;
-
-function msg(t){document.getElementById('status').textContent=t}
+let currentUser=null,myProfile=null,isSignup=false,cameraStream=null,cameraFacing='user',cameraFilter='none',sticker='',chatUser=null,pendingSnap=null;
+const $=id=>document.getElementById(id);
+function msg(t){const el=$('status');el.textContent=t;el.classList.remove('hidden');clearTimeout(window.statusTimer);window.statusTimer=setTimeout(()=>el.classList.add('hidden'),4200)}
 function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
-
-function switchForm(){
- isSignup=!isSignup;
- document.getElementById('signupFields').style.display=isSignup?'block':'none';
- document.getElementById('formTitle').textContent=isSignup?'Create AVIKA Account':'Welcome to AVIKA';
- document.getElementById('submitBtn').textContent=isSignup?'Sign Up':'Login';
- document.getElementById('switchBtn').textContent=isSignup?'Already have an account? Login':'Create New Account';
-}
-
-async function submitAuth(){
- const email=document.getElementById('email').value.trim();
- const password=document.getElementById('password').value;
- const name=document.getElementById('fullName').value.trim();
- const username=document.getElementById('username').value.trim().toLowerCase();
- if(!email||!password)return msg('Email और Password भरें।');
- if(password.length<6)return msg('Password कम से कम 6 अक्षर का रखें।');
- const btn=document.getElementById('submitBtn');
- btn.disabled=true;
- try{
-  if(isSignup){
-   if(!name||!username)return msg('Name और Username भरें।');
-   if(!/^[a-z0-9_]{3,20}$/.test(username))return msg('Username 3-20 अक्षर का रखें।');
-   const {data,error}=await db.auth.signUp({email,password,options:{data:{full_name:name,username}}});
-   if(error)throw error;
-   if(data.user&&data.session){
-    const {error:e}=await db.from('profiles').upsert({id:data.user.id,username,display_name:name},{onConflict:'id'});
-    if(e)throw e;
-    currentUser=data.user;
-    await bootApp();
-   }else msg('Signup सफल! Email confirm करके Login करें।');
-  }else{
-   const {data,error}=await db.auth.signInWithPassword({email,password});
-   if(error)throw error;
-   currentUser=data.user;
-   await ensureProfile();
-   await bootApp();
-  }
- }catch(e){msg('Error: '+e.message)}
- finally{btn.disabled=false}
-}
-
-async function ensureProfile(){
- const {data,error}=await db.from('profiles').select('*').eq('id',currentUser.id).maybeSingle();
- if(error)throw error;
- if(!data){
-  const meta=currentUser.user_metadata||{};
-  const username=meta.username||('user_'+currentUser.id.slice(0,8));
-  const {error:e}=await db.from('profiles').insert({id:currentUser.id,username,display_name:meta.full_name||'AVIKA User'});
-  if(e)throw e;
- }
-}
-
-async function bootApp(){
- const {data,error}=await db.from('profiles').select('*').eq('id',currentUser.id).single();
- if(error)throw error;
- myProfile=data;
- document.getElementById('auth').style.display='none';
- document.getElementById('app').style.display='block';
- await loadProfile();
- await loadFeed();
- await loadStories();
- msg('AVIKA में आपका स्वागत है! 🎉');
-}
-
-function go(id,btn){
- document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
- document.getElementById(id).classList.add('active');
- document.querySelectorAll('nav button').forEach(b=>b.classList.remove('active'));
- if(btn)btn.classList.add('active');
- if(id!=='snap')stopCamera();
- if(id==='snap')startCamera();
- if(id==='home'){loadFeed();loadStories()}
- if(id==='profile')loadProfile();
- if(id==='notifications')loadNotifications();
-}
-
-async function uploadFile(file,folder){
- if(!file)throw new Error('पहले File चुनें।');
- if(file.size>50*1024*1024)throw new Error('File 50 MB से छोटी होनी चाहिए।');
- const ext=(file.name.split('.').pop()||'jpg').toLowerCase().replace(/[^a-z0-9]/g,'');
- const path=currentUser.id+'/'+folder+'/'+Date.now()+'_'+Math.random().toString(36).slice(2)+'.'+ext;
- const {error}=await db.storage.from('avika-media').upload(path,file,{upsert:false,contentType:file.type});
- if(error)throw error;
- const {data}=db.storage.from('avika-media').getPublicUrl(path);
- return data.publicUrl;
-}
-
-async function createPost(){
- try{
-  const file=document.getElementById('postFile').files[0];
-  if(!file)throw new Error('Photo या Video चुनें।');
-  const url=await uploadFile(file,'posts');
-  const type=file.type.startsWith('video/')?'video':'image';
-  const {error}=await db.from('posts').insert({user_id:currentUser.id,media_url:url,media_type:type,caption:document.getElementById('postCaption').value});
-  if(error)throw error;
-  document.getElementById('postFile').value='';
-  document.getElementById('postCaption').value='';
-  msg('Post Publish हो गया! 🎉');
-  await loadFeed();
-  go('home');
- }catch(e){msg('Post Error: '+e.message)}
-}
-
-async function createStory(){
- try{
-  const file=document.getElementById('storyFile').files[0];
-  if(!file)throw new Error('Story Photo या Video चुनें।');
-  const url=await uploadFile(file,'stories');
-  const type=file.type.startsWith('video/')?'video':'image';
-  const {error}=await db.from('stories').insert({user_id:currentUser.id,media_url:url,media_type:type,expires_at:new Date(Date.now()+86400000).toISOString()});
-  if(error)throw error;
-  document.getElementById('storyFile').value='';
-  msg('Story 24 घंटे के लिए Share हो गई!');
-  await loadStories();
- }catch(e){msg('Story Error: '+e.message)}
-}
-
-async function loadFeed(){
- const box=document.getElementById('feed');
- box.innerHTML='<p class="muted">Loading posts...</p>';
- try{
-  const {data,error}=await db.from('posts').select('*').order('created_at',{ascending:false}).limit(50);
-  if(error)throw error;
-  if(!data.length){box.innerHTML='<p class="muted">अभी कोई Post नहीं है। पहली Post तुम करो!</p>';return}
-  const ids=[...new Set(data.map(p=>p.user_id))];
-  const {data:profiles}=await db.from('profiles').select('id,username,display_name,avatar_url').in('id',ids);
-  const {data:likes}=await db.from('likes').select('post_id,user_id').in('post_id',data.map(p=>p.id));
-  const {data:comments}=await db.from('comments').select('post_id').in('post_id',data.map(p=>p.id));
-  box.innerHTML='';
-  for(const p of data){
-   const owner=profiles?.find(x=>x.id===p.user_id);
-   const liked=likes?.some(x=>x.post_id===p.id&&x.user_id===currentUser.id);
-   const count=likes?.filter(x=>x.post_id===p.id).length||0;
-   const cc=comments?.filter(x=>x.post_id===p.id).length||0;
-   const media=p.media_type==='video'
-    ?`<video class="post-img" src="${esc(p.media_url)}" controls playsinline></video>`
-    :`<img class="post-img" src="${esc(p.media_url)}" loading="lazy">`;
-   const el=document.createElement('div');
-   el.className='card';
-   el.innerHTML=`
-    <div class="post-head">
-     <img class="avatar" src="${esc(owner?.avatar_url||'https://placehold.co/80x80/333/fff?text=A')}">
-     <div><div class="username">@${esc(owner?.username||'user')}</div><div class="small">${new Date(p.created_at).toLocaleString()}</div></div>
-    </div>
-    ${media}
-    <p>${esc(p.caption)}</p>
-    <div class="post-actions">
-     <button onclick="toggleLike('${p.id}')">${liked?'❤️':'🤍'} ${count}</button>
-     <button class="secondary" onclick="showComments('${p.id}')">💬 Comments (${cc})</button>
-     ${p.user_id===currentUser.id?`<button class="secondary" onclick="deletePost('${p.id}')">🗑 Delete</button>`:''}
-    </div>
-    <div id="comments-${p.id}"></div>`;
-   box.appendChild(el);
-  }
- }catch(e){box.innerHTML='<p class="muted">Feed Error: '+esc(e.message)+'</p>'}
-}
-
-async function toggleLike(postId){
- try{
-  const {data,error}=await db.from('likes').select('id').eq('post_id',postId).eq('user_id',currentUser.id).maybeSingle();
-  if(error)throw error;
-  if(data){
-   const {error:e}=await db.from('likes').delete().eq('id',data.id);
-   if(e)throw e;
-  }else{
-   const {error:e}=await db.from('likes').insert({post_id:postId,user_id:currentUser.id});
-   if(e)throw e;
-   const {data:p}=await db.from('posts').select('user_id').eq('id',postId).single();
-   if(p&&p.user_id!==currentUser.id)await notify(p.user_id,'like',postId);
-  }
-  await loadFeed();
- }catch(e){msg('Like Error: '+e.message)}
-}
-
-async function showComments(postId){
- const box=document.getElementById('comments-'+postId);
- if(!box)return;
- box.innerHTML='<input id="commentText-'+postId+'" placeholder="Write a comment"><button onclick="addComment(\''+postId+'\')">Send</button><div id="commentList-'+postId+'"></div>';
- const {data,error}=await db.from('comments').select('content,user_id,created_at').eq('post_id',postId).order('created_at');
- if(error){box.innerHTML+='Comment Error: '+esc(error.message);return}
- const list=document.getElementById('commentList-'+postId);
- for(const c of data||[]){
-  const {data:u}=await db.from('profiles').select('username').eq('id',c.user_id).maybeSingle();
-  const p=document.createElement('p');
-  p.innerHTML='<b>@'+esc(u?.username||'user')+'</b>: '+esc(c.content);
-  list.appendChild(p);
- }
-}
-
-async function addComment(postId){
- try{
-  const input=document.getElementById('commentText-'+postId);
-  const content=input.value.trim();
-  if(!content)return;
-  const {error}=await db.from('comments').insert({post_id:postId,user_id:currentUser.id,content});
-  if(error)throw error;
-  const {data:p}=await db.from('posts').select('user_id').eq('id',postId).single();
-  if(p&&p.user_id!==currentUser.id)await notify(p.user_id,'comment',postId);
-  await showComments(postId);
-  msg('Comment भेज दिया गया।');
- }catch(e){msg('Comment Error: '+e.message)}
-}
-
-async function deletePost(id){
- if(!confirm('क्या Post Delete करना है?'))return;
- const {error}=await db.from('posts').delete().eq('id',id).eq('user_id',currentUser.id);
- if(error)msg(error.message);else{msg('Post Deleted');loadFeed()}
-}
-
-async function searchUsers(){
- const q=document.getElementById('searchInput').value.trim().toLowerCase();
- const box=document.getElementById('searchResults');
- if(q.length<2){box.innerHTML='';return}
- const {data,error}=await db.from('profiles').select('id,username,display_name').ilike('username','%'+q+'%').limit(20);
- if(error){box.textContent=error.message;return}
- box.innerHTML='';
- for(const u of data||[]){
-  if(u.id===currentUser.id)continue;
-  const div=document.createElement('div');
-  div.className='result';
-  div.innerHTML='<div><b>'+esc(u.display_name||u.username)+'</b><div class="small">@'+esc(u.username)+'</div></div><button onclick="toggleFollow(\''+u.id+'\')">Follow</button>';
-  box.appendChild(div);
- }
-}
-
-async function toggleFollow(userId){
- try{
-  const {data,error}=await db.from('follows').select('id').eq('follower_id',currentUser.id).eq('following_id',userId).maybeSingle();
-  if(error)throw error;
-  if(data){
-   const {error:e}=await db.from('follows').delete().eq('id',data.id);
-   if(e)throw e;
-   msg('Unfollow कर दिया।');
-  }else{
-   const {error:e}=await db.from('follows').insert({follower_id:currentUser.id,following_id:userId});
-   if(e)throw e;
-   await notify(userId,'follow',null);
-   msg('अब आप Follow कर रहे हैं!');
-  }
-  searchUsers();
-  loadProfile();
- }catch(e){msg('Follow Error: '+e.message)}
-}
-
-async function notify(userId,type,referenceId){
- try{
-  await db.from('notifications').insert({user_id:userId,actor_id:currentUser.id,type,reference_id:referenceId});
- }catch(e){console.log(e.message)}
-}
-
-async function loadStories(){
- const box=document.getElementById('storyList');
- box.innerHTML='';
- const {data,error}=await db.from('stories').select('*').gt('expires_at',new Date().toISOString()).order('created_at',{ascending:false}).limit(40);
- if(error){box.textContent=error.message;return}
- for(const s of data||[]){
-  const {data:u}=await db.from('profiles').select('username,avatar_url').eq('id',s.user_id).maybeSingle();
-  const div=document.createElement('div');
-  div.className='story-item';
-  div.innerHTML=`<div class="story-ring"><img src="${esc(u?.avatar_url||s.media_url)}"></div><div>${esc(u?.username||'user')}</div>`;
-  div.onclick=()=>viewStory(s);
-  box.appendChild(div);
- }
-}
-
-function viewStory(s){
- const w=window.open('','_blank');
- if(!w){msg('Story देखने के लिए popup allow करें।');return}
- const media=s.media_type==='video'?`<video src="${esc(s.media_url)}" controls autoplay style="max-width:100%;max-height:85vh"></video>`:`<img src="${esc(s.media_url)}" style="max-width:100%;max-height:85vh">`;
- w.document.write('<html><body style="background:#090910;color:white;text-align:center;font-family:Arial">'+media+'</body></html>');
- db.from('story_views').upsert({story_id:s.id,viewer_id:currentUser.id},{onConflict:'story_id,viewer_id'});
-}
-
-async function findChatUser(){
- const q=document.getElementById('chatSearch').value.trim().toLowerCase();
- const box=document.getElementById('chatSearchResults');
- if(q.length<2){box.textContent='कम से कम 2 अक्षर लिखें।';return}
- const {data,error}=await db.from('profiles').select('id,username,display_name').ilike('username','%'+q+'%').limit(15);
- if(error){box.textContent=error.message;return}
- box.innerHTML='';
- for(const u of data||[]){
-  if(u.id===currentUser.id)continue;
-  const b=document.createElement('button');
-  b.textContent='Chat with @'+u.username;
-  b.onclick=()=>openChat(u);
-  box.appendChild(b);
- }
-}
-
-async function openChat(user){
- chatUser=user;
- document.getElementById('chatWindow').style.display='block';
- document.getElementById('chatWith').textContent='Chat with @'+user.username;
- await refreshMessages();
-}
-
-async function refreshMessages(){
- if(!chatUser)return;
- const box=document.getElementById('messages');
- box.innerHTML='Loading...';
- const {data,error}=await db.from('dm_messages').select('*').or(
-  'and(sender_id.eq.'+currentUser.id+',receiver_id.eq.'+chatUser.id+'),and(sender_id.eq.'+chatUser.id+',receiver_id.eq.'+currentUser.id+')'
- ).order('created_at',{ascending:true}).limit(100);
- if(error){box.textContent=error.message;return}
- box.innerHTML='';
- for(const m of data||[]){
-  const p=document.createElement('p');
-  p.style.textAlign=m.sender_id===currentUser.id?'right':'left';
-  p.innerHTML='<span style="display:inline-block;background:#343449;border-radius:12px;padding:9px;max-width:85%">'+esc(m.content)+'</span>';
-  box.appendChild(p);
- }
- box.scrollTop=box.scrollHeight;
- await db.from('dm_messages').update({is_read:true}).eq('sender_id',chatUser.id).eq('receiver_id',currentUser.id);
-}
-
-async function sendMessage(){
- try{
-  if(!chatUser)return;
-  const input=document.getElementById('chatMessage');
-  const content=input.value.trim();
-  if(!content)return;
-  const {error}=await db.from('dm_messages').insert({sender_id:currentUser.id,receiver_id:chatUser.id,content});
-  if(error)throw error;
-  input.value='';
-  await refreshMessages();
- }catch(e){msg('Chat Error: '+e.message)}
-}
-
-async function loadNotifications(){
- const box=document.getElementById('notificationList');
- box.innerHTML='Loading...';
- const {data,error}=await db.from('notifications').select('*').eq('user_id',currentUser.id).order('created_at',{ascending:false}).limit(50);
- if(error){box.textContent=error.message;return}
- box.innerHTML='';
- for(const n of data||[]){
-  const {data:u}=await db.from('profiles').select('username').eq('id',n.actor_id).maybeSingle();
-  const p=document.createElement('p');
-  p.textContent='@'+(u?.username||'Someone')+' '+n.type+' • '+new Date(n.created_at).toLocaleString();
-  box.appendChild(p);
-  if(!n.is_read)await db.from('notifications').update({is_read:true}).eq('id',n.id);
- }
- if(!data?.length)box.textContent='No notifications yet.';
-}
-
-async function loadProfile(){
- const {data,error}=await db.from('profiles').select('*').eq('id',currentUser.id).single();
- if(error){msg(error.message);return}
- myProfile=data;
- document.getElementById('profileName').textContent=data.display_name||'AVIKA User';
- document.getElementById('profileUsername').textContent='@'+data.username;
- document.getElementById('profileBio').textContent=data.bio||'No bio yet';
- document.getElementById('editName').value=data.display_name||'';
- document.getElementById('editBio').value=data.bio||'';
- const {count:followers}=await db.from('follows').select('*',{count:'exact',head:true}).eq('following_id',currentUser.id);
- const {count:following}=await db.from('follows').select('*',{count:'exact',head:true}).eq('follower_id',currentUser.id);
- const {count:posts}=await db.from('posts').select('*',{count:'exact',head:true}).eq('user_id',currentUser.id);
- document.getElementById('profileStats').textContent=(posts||0)+' Posts  •  '+(followers||0)+' Followers  •  '+(following||0)+' Following';
- const {data:mine}=await db.from('posts').select('*').eq('user_id',currentUser.id).order('created_at',{ascending:false}).limit(20);
- const box=document.getElementById('myPosts');
- box.innerHTML='';
- for(const p of mine||[]){
-  const media=p.media_type==='video'?`<video class="post-img" src="${esc(p.media_url)}" controls></video>`:`<img class="post-img" src="${esc(p.media_url)}">`;
-  const div=document.createElement('div');
-  div.innerHTML=media+'<p>'+esc(p.caption)+'</p>';
-  box.appendChild(div);
- }
-}
-
-async function saveProfile(){
- try{
-  const display_name=document.getElementById('editName').value.trim();
-  const bio=document.getElementById('editBio').value.trim();
-  const {error}=await db.from('profiles').update({display_name,bio}).eq('id',currentUser.id);
-  if(error)throw error;
-  msg('Profile Update हो गई!');
-  await loadProfile();
- }catch(e){msg('Profile Error: '+e.message)}
-}
-
-async function startCamera(){
- if(cameraStream)return;
- try{
-  cameraStream=await navigator.mediaDevices.getUserMedia({video:{facingMode:cameraFacing},audio:false});
-  const v=document.getElementById('camera');
-  v.srcObject=cameraStream;
-  v.style.filter=cameraFilter;
-  await v.play();
- }catch(e){cameraStream=null;msg('Camera Permission दें और HTTPS Safari इस्तेमाल करें।')}
-}
-function stopCamera(){
- if(cameraStream)cameraStream.getTracks().forEach(t=>t.stop());
- cameraStream=null;
- document.getElementById('camera').srcObject=null;
-}
-async function flipCamera(){
- cameraFacing=cameraFacing==='user'?'environment':'user';
- stopCamera();
- await startCamera();
-}
-function setFilter(f){
- cameraFilter=f;
- document.getElementById('camera').style.filter=f;
-}
-function setSticker(s){sticker=s}
-
-async function captureSnap(){
- try{
-  if(!cameraStream)throw new Error('पहले Camera Start करें।');
-  const v=document.getElementById('camera');
-  const c=document.createElement('canvas');
-  c.width=v.videoWidth;c.height=v.videoHeight;
-  const ctx=c.getContext('2d');
-  ctx.save();
-  if(cameraFacing==='user'){ctx.translate(c.width,0);ctx.scale(-1,1)}
-  ctx.filter=cameraFilter;
-  ctx.drawImage(v,0,0,c.width,c.height);
-  ctx.restore();
-  ctx.filter='none';
-  if(sticker){ctx.font=Math.floor(c.width*.18)+'px Arial';ctx.textAlign='center';ctx.fillText(sticker,c.width/2,c.height*.25)}
-  const t=document.getElementById('snapText').value.trim();
-  if(t){ctx.font='bold '+Math.floor(c.width*.06)+'px Arial';ctx.textAlign='center';ctx.lineWidth=4;ctx.strokeStyle='black';ctx.fillStyle='white';ctx.strokeText(t,c.width/2,c.height*.88);ctx.fillText(t,c.width/2,c.height*.88)}
-  const blob=await new Promise(resolve=>c.toBlob(resolve,'image/jpeg',.9));
-  const file=new File([blob],'avika-snap.jpg',{type:'image/jpeg'});
-  const url=URL.createObjectURL(blob);
-  document.getElementById('preview').innerHTML='<img src="'+url+'"><button onclick="publishSnap()">Share as Post</button>';
-  window.pendingSnap=file;
- }catch(e){msg('Camera Error: '+e.message)}
-}
-
-async function publishSnap(){
- if(!window.pendingSnap)return;
- try{
-  const url=await uploadFile(window.pendingSnap,'posts');
-  const {error}=await db.from('posts').insert({user_id:currentUser.id,media_url:url,media_type:'image',caption:'My AVIKA Snap'});
-  if(error)throw error;
-  window.pendingSnap=null;
-  document.getElementById('preview').innerHTML='';
-  msg('Snap shared as a Post!');
-  await loadFeed();
- }catch(e){msg('Snap Error: '+e.message)}
-}
-
-async function logout(){
- stopCamera();
- await db.auth.signOut();
- currentUser=null;myProfile=null;
- document.getElementById('app').style.display='none';
- document.getElementById('auth').style.display='block';
- msg('Logout हो गया।');
-}
-
-db.auth.getSession().then(async({data})=>{
- if(data.session){
-  currentUser=data.session.user;
-  try{await ensureProfile();await bootApp()}
-  catch(e){msg('Login Error: '+e.message)}
- }
-});
+function avatar(url){return url||'https://placehold.co/100x100/30243e/ffffff?text=A'}
+function toggleTheme(){const root=document.documentElement;const next=root.dataset.theme==='light'?'dark':'light';root.dataset.theme=next;localStorage.setItem('avika-theme',next);$('themeBtn').textContent=next==='light'?'🌙':'☀️'}
+(function(){const t=localStorage.getItem('avika-theme')||'dark';document.documentElement.dataset.theme=t;$('themeBtn').textContent=t==='light'?'🌙':'☀️'})();
+function switchForm(){isSignup=!isSignup;$('signupFields').classList.toggle('hidden',!isSignup);$('formTitle').textContent=isSignup?'Create your account':'Welcome back';$('formSubtitle').textContent=isSignup?'Join the AVIKA community.':'Login to continue your social world.';$('submitBtn').textContent=isSignup?'Create account':'Login';$('switchBtn').textContent=isSignup?'Already have an account? Login':'Create a new account';$('forgotBtn').classList.toggle('hidden',isSignup)}
+async function submitAuth(){const email=$('email').value.trim(),password=$('password').value,name=$('fullName').value.trim(),username=$('username').value.trim().toLowerCase();if(!email||!password)return msg('Email और Password भरें।');if(password.length<6)return msg('Password कम से कम 6 अक्षर का रखें।');if(isSignup&&(!name||!username))return msg('Name और Username भरें।');if(isSignup&&!/^[a-z0-9_]{3,20}$/.test(username))return msg('Username 3–20 अक्षर का रखें।');$('submitBtn').disabled=true;try{if(isSignup){const {data,error}=await db.auth.signUp({email,password,options:{data:{full_name:name,username}}});if(error)throw error;if(data.user&&data.session){const {error:e}=await db.from('profiles').upsert({id:data.user.id,username,display_name:name},{onConflict:'id'});if(e)throw e;currentUser=data.user;await bootApp()}else msg('Signup सफल! Email confirmation के बाद Login करें।')}else{const {data,error}=await db.auth.signInWithPassword({email,password});if(error)throw error;currentUser=data.user;await ensureProfile();await bootApp()}}catch(e){msg('Auth Error: '+e.message)}finally{$('submitBtn').disabled=false}}
+async function forgotPassword(){const email=$('email').value.trim();if(!email)return msg('पहले Email Address भरें।');try{const {error}=await db.auth.resetPasswordForEmail(email,{redirectTo:location.origin+location.pathname});if(error)throw error;msg('Password reset link email पर भेज दिया गया।')}catch(e){msg('Reset Error: '+e.message)}}
+async function ensureProfile(){const {data,error}=await db.from('profiles').select('*').eq('id',currentUser.id).maybeSingle();if(error)throw error;if(!data){const meta=currentUser.user_metadata||{},username=meta.username||('user_'+currentUser.id.slice(0,8));const {error:e}=await db.from('profiles').insert({id:currentUser.id,username,display_name:meta.full_name||'AVIKA User'});if(e)throw e}}
+async function bootApp(){const {data,error}=await db.from('profiles').select('*').eq('id',currentUser.id).single();if(error)throw error;myProfile=data;$('auth').classList.add('hidden');$('app').classList.remove('hidden');await Promise.all([loadProfile(),loadFeed(),loadStories()]);msg('Welcome to AVIKA! ✨')}
+function go(id,btn){document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));$(id).classList.add('active');document.querySelectorAll('.navitem,.bottom-nav button').forEach(b=>b.classList.remove('active'));if(btn)btn.classList.add('active');else document.querySelectorAll(`[data-page="${id}"]`).forEach(b=>b.classList.add('active'));if(id!=='snap')stopCamera();if(id==='snap')startCamera();if(id==='home'){loadFeed();loadStories()}if(id==='profile')loadProfile();if(id==='notifications')loadNotifications();if(id==='reels')loadReels()}
+async function uploadFile(file,folder){if(!file)throw Error('पहले File चुनें।');if(file.size>50*1024*1024)throw Error('File 50 MB से छोटी होनी चाहिए।');if(!file.type.startsWith('image/')&&!file.type.startsWith('video/'))throw Error('केवल image या video upload करें।');const ext=(file.name.split('.').pop()||'jpg').toLowerCase().replace(/[^a-z0-9]/g,'');const path=currentUser.id+'/'+folder+'/'+Date.now()+'_'+Math.random().toString(36).slice(2)+'.'+ext;const {error}=await db.storage.from('avika-media').upload(path,file,{upsert:false,contentType:file.type});if(error)throw error;return db.storage.from('avika-media').getPublicUrl(path).data.publicUrl}
+async function createPost(){try{const file=$('postFile').files[0],url=await uploadFile(file,'posts'),type=file.type.startsWith('video/')?'video':'image';const {error}=await db.from('posts').insert({user_id:currentUser.id,media_url:url,media_type:type,caption:$('postCaption').value.trim()});if(error)throw error;$('postFile').value='';$('postCaption').value='';msg('Post publish हो गई!');go('home')}catch(e){msg('Post Error: '+e.message)}}
+async function createStory(){try{const file=$('storyFile').files[0],url=await uploadFile(file,'stories'),type=file.type.startsWith('video/')?'video':'image';const {error}=await db.from('stories').insert({user_id:currentUser.id,media_url:url,media_type:type,expires_at:new Date(Date.now()+86400000).toISOString()});if(error)throw error;$('storyFile').value='';msg('Story 24 घंटे के लिए share हो गई!');await loadStories()}catch(e){msg('Story Error: '+e.message)}}
+async function getProfiles(ids){if(!ids.length)return[];const {data,error}=await db.from('profiles').select('id,username,display_name,avatar_url').in('id',[...new Set(ids)]);if(error)throw error;return data||[]}
+function mediaMarkup(p){return p.media_type==='video'?`<video class="post-media" src="${esc(p.media_url)}" controls playsinline preload="metadata"></video>`:`<img class="post-media" src="${esc(p.media_url)}" loading="lazy" alt="AVIKA post">`}
+async function renderPosts(container,posts){container.innerHTML='';if(!posts.length){container.innerHTML='<div class="card empty">Nothing here yet. Be the first to share a moment!</div>';return}const profiles=await getProfiles(posts.map(p=>p.user_id));const ids=posts.map(p=>p.id);const [{data:likes},{data:comments}]=await Promise.all([db.from('likes').select('post_id,user_id').in('post_id',ids),db.from('comments').select('post_id').in('post_id',ids)]);for(const p of posts){const owner=profiles.find(x=>x.id===p.user_id),liked=(likes||[]).some(x=>x.post_id===p.id&&x.user_id===currentUser.id),count=(likes||[]).filter(x=>x.post_id===p.id).length,cc=(comments||[]).filter(x=>x.post_id===p.id).length;const el=document.createElement('article');el.className='card post';el.innerHTML=`<div class="post-head"><img class="avatar" src="${esc(avatar(owner?.avatar_url))}"><div class="grow"><b>${esc(owner?.display_name||owner?.username||'AVIKA User')}</b><div class="small">@${esc(owner?.username||'user')} · ${new Date(p.created_at).toLocaleString()}</div></div><button class="action" onclick="reportPost('${p.id}')">•••</button></div>${mediaMarkup(p)}<div class="post-body"><div class="caption">${esc(p.caption||'')}</div><div class="post-actions"><button class="action ${liked?'liked':''}" onclick="toggleLike('${p.id}')">${liked?'♥':'♡'} ${count}</button><button class="action" onclick="showComments('${p.id}')">▢ Comments (${cc})</button><button class="action" onclick="sharePost('${p.id}')">↗ Share</button>${p.user_id===currentUser.id?`<button class="action" onclick="deletePost('${p.id}')">Delete</button>`:''}</div><div id="comments-${p.id}"></div></div>`;container.appendChild(el)}}
+async function loadFeed(){const box=$('feed');box.innerHTML='<div class="empty">Loading feed…</div>';try{const {data,error}=await db.from('posts').select('*').order('created_at',{ascending:false}).limit(50);if(error)throw error;await renderPosts(box,data||[])}catch(e){box.innerHTML='<div class="empty">Feed Error: '+esc(e.message)+'</div>'}}
+async function loadReels(){const box=$('reelsFeed');box.innerHTML='<div class="empty">Loading videos…</div>';try{const {data,error}=await db.from('posts').select('*').eq('media_type','video').order('created_at',{ascending:false}).limit(40);if(error)throw error;await renderPosts(box,data||[])}catch(e){box.textContent='Reels Error: '+e.message}}
+async function toggleLike(postId){try{const {data,error}=await db.from('likes').select('id').eq('post_id',postId).eq('user_id',currentUser.id).maybeSingle();if(error)throw error;if(data){const {error:e}=await db.from('likes').delete().eq('id',data.id);if(e)throw e}else{const {error:e}=await db.from('likes').insert({post_id:postId,user_id:currentUser.id});if(e)throw e;const {data:p}=await db.from('posts').select('user_id').eq('id',postId).single();if(p&&p.user_id!==currentUser.id)await notify(p.user_id,'like',postId)}await loadFeed();if($('reels').classList.contains('active'))await loadReels()}catch(e){msg('Like Error: '+e.message)}}
+async function showComments(postId){const box=$('comments-'+postId);if(!box)return;box.innerHTML=`<input class="field" id="commentText-${postId}" placeholder="Write a comment…"><button class="primary" onclick="addComment('${postId}')">Send</button><div id="commentList-${postId}"></div>`;try{const {data,error}=await db.from('comments').select('content,user_id,created_at').eq('post_id',postId).order('created_at');if(error)throw error;const profiles=await getProfiles((data||[]).map(c=>c.user_id));for(const c of data||[]){const u=profiles.find(x=>x.id===c.user_id),p=document.createElement('p');p.innerHTML='<b>@'+esc(u?.username||'user')+'</b> '+esc(c.content);$('commentList-'+postId).appendChild(p)}}catch(e){box.textContent='Comment Error: '+e.message}}
+async function addComment(postId){try{const input=$('commentText-'+postId),content=input.value.trim();if(!content)return;const {error}=await db.from('comments').insert({post_id:postId,user_id:currentUser.id,content});if(error)throw error;const {data:p}=await db.from('posts').select('user_id').eq('id',postId).single();if(p&&p.user_id!==currentUser.id)await notify(p.user_id,'comment',postId);await showComments(postId);msg('Comment sent.')}catch(e){msg('Comment Error: '+e.message)}}
+async function deletePost(id){if(!confirm('क्या आप अपनी यह post delete करना चाहते हैं?'))return;const {error}=await db.from('posts').delete().eq('id',id).eq('user_id',currentUser.id);if(error)msg(error.message);else{msg('Post deleted');loadFeed()}}
+async function sharePost(id){const url=location.origin+location.pathname+'#post-'+id;try{if(navigator.share)await navigator.share({title:'AVIKA post',url});else{await navigator.clipboard.writeText(url);msg('Post link copied.')}}catch(e){if(e.name!=='AbortError')msg('Share उपलब्ध नहीं हुआ।')}}
+async function reportPost(id){const reason=prompt('Report का कारण लिखें:');if(!reason)return;msg('Report feature के लिए अभी reports table नहीं बनी है। कोई report submit नहीं हुई।')}
+async function searchUsers(){const q=$('searchInput').value.trim().toLowerCase(),box=$('searchResults');if(q.length<2){box.innerHTML='';return}try{const {data,error}=await db.from('profiles').select('id,username,display_name,avatar_url').ilike('username','%'+q+'%').limit(20);if(error)throw error;box.innerHTML='';for(const u of data||[]){if(u.id===currentUser.id)continue;const div=document.createElement('div');div.className='user-result';div.innerHTML=`<div class="row"><img class="avatar" src="${esc(avatar(u.avatar_url))}"><div><b>${esc(u.display_name||u.username)}</b><div class="small">@${esc(u.username)}</div></div></div><button class="action" onclick="toggleFollow('${u.id}',this)">Follow</button>`;box.appendChild(div)}}catch(e){box.textContent='Search Error: '+e.message}}
+async function toggleFollow(userId,btn){try{const {data,error}=await db.from('follows').select('id').eq('follower_id',currentUser.id).eq('following_id',userId).maybeSingle();if(error)throw error;if(data){const {error:e}=await db.from('follows').delete().eq('id',data.id);if(e)throw e;msg('Unfollowed.')}else{const {error:e}=await db.from('follows').insert({follower_id:currentUser.id,following_id:userId});if(e)throw e;await notify(userId,'follow',null);msg('Following!')}if(btn)btn.textContent=data?'Follow':'Following';loadProfile()}catch(e){msg('Follow Error: '+e.message)}}
+async function notify(userId,type,referenceId){try{await db.from('notifications').insert({user_id:userId,actor_id:currentUser.id,type,reference_id:referenceId})}catch(e){console.warn('Notification:',e.message)}}
+async function loadStories(){const box=$('storyList');box.innerHTML='';const add=document.createElement('button');add.className='story-add';add.innerHTML='＋<br>Add story';add.onclick=()=>go('create');box.appendChild(add);try{const {data,error}=await db.from('stories').select('*').gt('expires_at',new Date().toISOString()).order('created_at',{ascending:false}).limit(40);if(error)throw error;const profiles=await getProfiles((data||[]).map(s=>s.user_id));for(const s of data||[]){const u=profiles.find(x=>x.id===s.user_id),div=document.createElement('div');div.className='story';div.innerHTML=`<div class="ring"><img src="${esc(avatar(u?.avatar_url||s.media_url))}"></div><div>${esc(u?.username||'user')}</div>`;div.onclick=()=>viewStory(s);box.appendChild(div)}}catch(e){msg('Stories: '+e.message)}}
+async function viewStory(s){const box=$('storyContent');box.innerHTML=s.media_type==='video'?`<video src="${esc(s.media_url)}" controls autoplay playsinline style="max-width:100%;max-height:75vh;border-radius:12px"></video>`:`<img src="${esc(s.media_url)}" alt="Story" style="max-width:100%;max-height:75vh;border-radius:12px">`;$('storyModal').classList.remove('hidden');try{await db.from('story_views').upsert({story_id:s.id,viewer_id:currentUser.id},{onConflict:'story_id,viewer_id'})}catch(e){console.warn(e.message)}}
+function closeStory(){$('storyModal').classList.add('hidden');$('storyContent').innerHTML=''}
+async function findChatUser(){const q=$('chatSearch').value.trim().toLowerCase(),box=$('chatSearchResults');if(q.length<2){box.textContent='कम से कम 2 अक्षर लिखें।';return}try{const {data,error}=await db.from('profiles').select('id,username,display_name,avatar_url').ilike('username','%'+q+'%').limit(15);if(error)throw error;box.innerHTML='';for(const u of data||[]){if(u.id===currentUser.id)continue;const b=document.createElement('button');b.className='action';b.textContent='Chat with @'+u.username;b.onclick=()=>openChat(u);box.appendChild(b)}}catch(e){box.textContent=e.message}}
+async function openChat(user){chatUser=user;$('chatWindow').classList.remove('hidden');$('chatWith').textContent='@'+user.username;await refreshMessages()}
+async function refreshMessages(){if(!chatUser)return;const box=$('messages');box.innerHTML='Loading…';try{const {data,error}=await db.from('dm_messages').select('*').or('and(sender_id.eq.'+currentUser.id+',receiver_id.eq.'+chatUser.id+'),and(sender_id.eq.'+chatUser.id+',receiver_id.eq.'+currentUser.id+')').order('created_at',{ascending:true}).limit(100);if(error)throw error;box.innerHTML='';for(const m of data||[]){const p=document.createElement('div');p.className='bubble '+(m.sender_id===currentUser.id?'mine':'');p.textContent=m.content||'Media message';box.appendChild(p)}box.scrollTop=box.scrollHeight;await db.from('dm_messages').update({is_read:true}).eq('sender_id',chatUser.id).eq('receiver_id',currentUser.id)}catch(e){box.textContent='Chat Error: '+e.message}}
+async function sendMessage(){try{if(!chatUser)return;const input=$('chatMessage'),content=input.value.trim();if(!content)return;const {error}=await db.from('dm_messages').insert({sender_id:currentUser.id,receiver_id:chatUser.id,content});if(error)throw error;input.value='';await refreshMessages()}catch(e){msg('Chat Error: '+e.message)}}
+async function loadNotifications(){const box=$('notificationList');box.innerHTML='Loading…';try{const {data,error}=await db.from('notifications').select('*').eq('user_id',currentUser.id).order('created_at',{ascending:false}).limit(50);if(error)throw error;const profiles=await getProfiles((data||[]).map(n=>n.actor_id));box.innerHTML='';for(const n of data||[]){const u=profiles.find(x=>x.id===n.actor_id),p=document.createElement('p');p.textContent='@'+(u?.username||'Someone')+' '+n.type+' · '+new Date(n.created_at).toLocaleString();box.appendChild(p);if(!n.is_read)await db.from('notifications').update({is_read:true}).eq('id',n.id)}if(!data?.length)box.innerHTML='<div class="empty">No notifications yet.</div>'}catch(e){box.textContent='Notification Error: '+e.message}}
+async function loadProfile(){try{const {data,error}=await db.from('profiles').select('*').eq('id',currentUser.id).single();if(error)throw error;myProfile=data;$('profileName').textContent=data.display_name||'AVIKA User';$('profileUsername').textContent='@'+data.username;$('profileBio').textContent=data.bio||'No bio yet';$('profileAvatar').src=avatar(data.avatar_url);$('miniAvatar').src=avatar(data.avatar_url);$('miniName').textContent=data.display_name||'Your profile';$('miniUsername').textContent='@'+data.username;$('editName').value=data.display_name||'';$('editBio').value=data.bio||'';const [{count:followers},{count:following},{count:posts}]=await Promise.all([db.from('follows').select('*',{count:'exact',head:true}).eq('following_id',currentUser.id),db.from('follows').select('*',{count:'exact',head:true}).eq('follower_id',currentUser.id),db.from('posts').select('*',{count:'exact',head:true}).eq('user_id',currentUser.id)]);$('profileStats').innerHTML=`<div><b>${posts||0}</b><span class="small">Posts</span></div><div><b>${followers||0}</b><span class="small">Followers</span></div><div><b>${following||0}</b><span class="small">Following</span></div>`;const {data:mine}=await db.from('posts').select('*').eq('user_id',currentUser.id).order('created_at',{ascending:false}).limit(30);$('myPosts').innerHTML='';for(const p of mine||[]){const el=document.createElement(p.media_type==='video'?'video':'img');el.src=p.media_url;if(el.tagName==='VIDEO'){el.controls=true;el.playsInline=true}$('myPosts').appendChild(el)}}catch(e){msg('Profile Error: '+e.message)}}
+async function saveProfile(){try{const display_name=$('editName').value.trim(),bio=$('editBio').value.trim();if(!display_name)return msg('Display name भरें।');const patch={display_name,bio};const file=$('avatarFile').files[0];if(file)patch.avatar_url=await uploadFile(file,'avatars');const {error}=await db.from('profiles').update(patch).eq('id',currentUser.id);if(error)throw error;$('avatarFile').value='';msg('Profile updated!');await loadProfile()}catch(e){msg('Profile Error: '+e.message)}}
+async function startCamera(){if(cameraStream)return;if(!navigator.mediaDevices?.getUserMedia)return msg('इस browser में Camera API उपलब्ध नहीं है। HTTPS Safari/Chrome इस्तेमाल करें।');try{cameraStream=await navigator.mediaDevices.getUserMedia({video:{facingMode:cameraFacing},audio:false});const v=$('camera');v.srcObject=cameraStream;v.style.filter=cameraFilter;await v.play()}catch(e){cameraStream=null;msg('Camera permission दें और HTTPS पर खोलें। '+e.message)}}
+function stopCamera(){if(cameraStream)cameraStream.getTracks().forEach(t=>t.stop());cameraStream=null;if($('camera'))$('camera').srcObject=null}
+async function flipCamera(){cameraFacing=cameraFacing==='user'?'environment':'user';stopCamera();await startCamera()}
+function setFilter(f){cameraFilter=f;$('camera').style.filter=f}
+function setSticker(s){sticker=s;msg(s?'Sticker selected: '+s:'Sticker cleared')}
+async function captureSnap(){try{if(!cameraStream)throw Error('पहले camera start करें।');const v=$('camera'),c=document.createElement('canvas');c.width=v.videoWidth;c.height=v.videoHeight;const ctx=c.getContext('2d');ctx.save();if(cameraFacing==='user'){ctx.translate(c.width,0);ctx.scale(-1,1)}ctx.filter=cameraFilter;ctx.drawImage(v,0,0,c.width,c.height);ctx.restore();ctx.filter='none';if(sticker){ctx.font=Math.floor(c.width*.18)+'px Arial';ctx.textAlign='center';ctx.fillText(sticker,c.width/2,c.height*.25)}const t=$('snapText').value.trim();if(t){ctx.font='bold '+Math.floor(c.width*.06)+'px Arial';ctx.textAlign='center';ctx.lineWidth=4;ctx.strokeStyle='black';ctx.fillStyle='white';ctx.strokeText(t,c.width/2,c.height*.88);ctx.fillText(t,c.width/2,c.height*.88)}const blob=await new Promise(resolve=>c.toBlob(resolve,'image/jpeg',.9));if(!blob)throw Error('Photo capture नहीं हो पाया।');pendingSnap=new File([blob],'avika-snap.jpg',{type:'image/jpeg'});const url=URL.createObjectURL(blob);$('preview').innerHTML=`<img src="${url}" style="width:100%;border-radius:14px;margin-top:12px"><button class="primary full" onclick="publishSnap()">Share as post</button>`}catch(e){msg('Camera Error: '+e.message)}}
+async function publishSnap(){if(!pendingSnap)return;try{const url=await uploadFile(pendingSnap,'posts'),{error}=await db.from('posts').insert({user_id:currentUser.id,media_url:url,media_type:'image',caption:$('snapText').value.trim()||'My AVIKA Snap'});if(error)throw error;pendingSnap=null;$('preview').innerHTML='';msg('Snap shared!');go('home')}catch(e){msg('Snap Error: '+e.message)}}
+async function logout(){stopCamera();await db.auth.signOut();currentUser=null;myProfile=null;$('app').classList.add('hidden');$('auth').classList.remove('hidden');msg('Logged out.')}
+db.auth.getSession().then(async({data,error})=>{if(error){msg(error.message);return}if(data.session){currentUser=data.session.user;try{await ensureProfile();await bootApp()}catch(e){msg('Login Error: '+e.message)}}});
+document.addEventListener('visibilitychange',()=>{if(document.hidden)stopCamera()});
 </script>
 </body>
 </html>
