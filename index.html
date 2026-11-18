@@ -1,0 +1,287 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#090910">
+<title>AVIKA Social</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#090910;color:white;font-family:Arial,sans-serif}
+header{position:sticky;top:0;background:#12121f;padding:17px 20px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #333;z-index:5}
+.logo{font-size:27px;font-weight:900;letter-spacing:3px;background:linear-gradient(90deg,#a855f7,#ec4899,#22d3ee);color:transparent;background-clip:text}
+main{max-width:650px;margin:auto;padding:18px 14px 100px}
+.page{display:none}.page.active{display:block}
+.card{background:#171725;padding:17px;border:1px solid #303044;border-radius:16px;margin:15px 0}
+h2{font-size:23px}
+input,textarea{width:100%;padding:13px;margin:7px 0;background:#242438;color:white;border:1px solid #44445a;border-radius:10px}
+.btn{background:linear-gradient(100deg,#9333ea,#db2777);color:white;border:0;padding:12px 16px;border-radius:10px;font-weight:bold;margin:5px 3px;cursor:pointer}
+.secondary{background:#33334a}
+nav{position:fixed;bottom:0;left:0;right:0;background:#141421;border-top:1px solid #38384a;display:flex;justify-content:space-around;padding:10px 2px;z-index:10}
+nav button{background:none;color:#aaa;border:0;font-size:12px}
+nav button span{display:block;font-size:22px;margin-bottom:3px}
+nav button.active{color:#ec72ee}
+video,img.preview{width:100%;border-radius:13px;max-height:420px;object-fit:cover;background:#000}
+.stories{display:flex;gap:14px;overflow:auto}
+.story{min-width:68px;text-align:center;font-size:12px}
+.circle{width:62px;height:62px;border:3px solid #d946ef;border-radius:50%;display:grid;place-items:center;margin:auto auto 5px;overflow:hidden;font-size:24px}
+.circle img{width:100%;height:100%;object-fit:cover}
+#messages{height:270px;overflow:auto;background:#10101b;padding:10px;border-radius:10px}
+.msg{background:#343449;padding:10px;border-radius:12px;margin:7px 0;max-width:85%;overflow-wrap:anywhere}
+.msg.me{background:#8138b7;margin-left:auto}
+.muted{color:#aaa;font-size:13px}
+</style>
+</head>
+<body>
+<header><div class="logo">AVIKA</div><span>✨ Social World</span></header>
+<main>
+
+<section class="page active" id="home">
+<h2>Welcome to AVIKA 👋</h2>
+<p class="muted">Share your moments with the world.</p>
+<div class="card">
+<h3>🌈 Stories</h3><div class="stories" id="storyList"></div>
+</div>
+<div class="card">
+<h3>📸 Create a Snap</h3>
+<p class="muted">Capture a photo or video from your iPhone.</p>
+<button class="btn" onclick="go('snap')">Open Camera</button>
+</div>
+<div class="card"><h3>💬 Recent Chats</h3><div id="recentChats">No chats yet</div></div>
+</section>
+
+<section class="page" id="friends">
+<h2>👥 Friends</h2>
+<div class="card">
+<input id="friendName" placeholder="Friend's name">
+<button class="btn" onclick="addFriend()">Add Friend</button>
+</div>
+<div class="card" id="friendList"></div>
+</section>
+
+<section class="page" id="snap">
+<h2>📸 Snap Camera</h2>
+<div class="card">
+<video id="camera" autoplay playsinline muted></video>
+<canvas id="canvas" hidden></canvas>
+<p class="muted">iPhone में Safari पर Camera Permission Allow करें।</p>
+<button class="btn" onclick="startCamera()">Start Camera</button>
+<button class="btn secondary" onclick="switchCamera()">🔄 Flip Camera</button>
+<button class="btn" onclick="takePhoto()">📷 Photo</button>
+<button class="btn" onclick="recordVideo()" id="recordBtn">🎥 Record Video</button>
+<div id="previewArea"></div>
+<button class="btn" id="storyBtn" style="display:none" onclick="postStory()">Add to Story</button>
+<button class="btn secondary" id="downloadBtn" style="display:none" onclick="downloadSnap()">Save Snap</button>
+</div>
+</section>
+
+<section class="page" id="chat">
+<h2>💬 Chat</h2>
+<div class="card">
+<input id="chatName" placeholder="Friend's name">
+<button class="btn" onclick="openChat()">Open Chat</button>
+<h3 id="chatTitle">Select a friend</h3>
+<div id="messages"></div>
+<input id="message" placeholder="Write a message..." onkeydown="if(event.key==='Enter')sendMessage()">
+<button class="btn" onclick="sendMessage()">Send</button>
+<input type="file" id="chatImage" accept="image/*" onchange="sendPhoto(event)">
+</div>
+<div class="card">🔥 <b>Snap Streak:</b> <span id="streak">Start chatting!</span></div>
+</section>
+
+<section class="page" id="profile">
+<h2>👤 My Profile</h2>
+<div class="card" style="text-align:center">
+<img id="profilePhoto" class="preview" style="width:90px;height:90px;border-radius:50%" alt="">
+<h2 id="profileName">AVIKA User</h2>
+<p id="profileHandle" class="muted">@avika_user</p>
+</div>
+<div class="card">
+<h3>Edit Profile</h3>
+<input id="editName" placeholder="Your name">
+<input id="editHandle" placeholder="Username">
+<textarea id="editBio" placeholder="Your bio"></textarea>
+<input type="file" id="profileFile" accept="image/*">
+<button class="btn" onclick="saveProfile()">Save Profile</button>
+</div>
+<div class="card"><h3>My Stories</h3><div id="myStories"></div></div>
+</section>
+
+</main>
+<nav>
+<button class="active" onclick="go('home',this)"><span>🏠</span>Home</button>
+<button onclick="go('friends',this)"><span>👥</span>Friends</button>
+<button onclick="go('snap',this)"><span>📸</span>Snap</button>
+<button onclick="go('chat',this)"><span>💬</span>Chat</button>
+<button onclick="go('profile',this)"><span>👤</span>Profile</button>
+</nav>
+
+<script>
+const read=(k,d)=>{try{return JSON.parse(localStorage.getItem(k))??d}catch(e){return d}};
+const save=(k,v)=>localStorage.setItem(k,JSON.stringify(v));
+let friends=read('avika_friends',[]);
+let stories=read('avika_stories',[]);
+let chats=read('avika_chats',{});
+let profile=read('avika_profile',{name:'AVIKA User',handle:'avika_user',bio:'',photo:''});
+let currentChat='',stream=null,facing='user',recorder=null,chunks=[],snap='',streaks=read('avika_streaks',{});
+
+function go(id,button){
+ document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+ document.getElementById(id).classList.add('active');
+ document.querySelectorAll('nav button').forEach(b=>b.classList.remove('active'));
+ if(button)button.classList.add('active');
+ else document.querySelectorAll('nav button')[['home','friends','snap','chat','profile'].indexOf(id)].classList.add('active');
+ if(id==='home')renderStories();
+ if(id==='friends')renderFriends();
+ if(id==='profile')renderProfile();
+ if(id==='chat')renderChat();
+ if(id==='snap')startCamera();
+}
+function notify(t){alert(t)}
+function cleanStories(){
+ stories=stories.filter(s=>Date.now()-s.time<86400000);
+ save('avika_stories',stories);
+}
+function renderStories(){
+ cleanStories();
+ let el=document.getElementById('storyList');el.innerHTML='';
+ let add=document.createElement('div');add.className='story';add.innerHTML='<div class="circle">➕</div>Your Story';add.onclick=()=>go('snap');el.appendChild(add);
+ stories.forEach(s=>{
+ let d=document.createElement('div');d.className='story';
+ let c=document.createElement('div');c.className='circle';
+ let img=document.createElement('img');img.src=s.data;c.appendChild(img);
+ let name=document.createElement('div');name.textContent=s.name;
+ d.append(c,name);d.onclick=()=>showStory(s);el.appendChild(d);
+ });
+ document.getElementById('recentChats').textContent=Object.keys(chats).join(', ')||'No chats yet';
+}
+function showStory(s){
+ let w=window.open('','_blank');
+ if(!w)return notify('Pop-ups allow करें');
+ w.document.write('<title>AVIKA Story</title><body style="background:#090910;color:white;text-align:center;font-family:Arial"><h3></h3><img style="max-width:95%;max-height:85vh"></body>');
+ w.document.querySelector('h3').textContent=s.name;
+ w.document.querySelector('img').src=s.data;
+}
+async function startCamera(){
+ if(stream)return;
+ if(!navigator.mediaDevices?.getUserMedia)return notify('Camera के लिए HTTPS पर Safari खोलें।');
+ try{
+ stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:facing},audio:true});
+ document.getElementById('camera').srcObject=stream;
+ }catch(e){notify('Camera permission Allow करें। Safari में AVIKA वेबसाइट खोलें।');}
+}
+async function switchCamera(){
+ facing=facing==='user'?'environment':'user';
+ if(stream){stream.getTracks().forEach(t=>t.stop());stream=null}
+ await startCamera();
+}
+function takePhoto(){
+ if(!stream)return notify('पहले Start Camera दबाएँ');
+ let v=document.getElementById('camera'),c=document.getElementById('canvas');
+ c.width=v.videoWidth;c.height=v.videoHeight;
+ c.getContext('2d').drawImage(v,0,0,c.width,c.height);
+ snap=c.toDataURL('image/jpeg',.8);
+ document.getElementById('previewArea').innerHTML='<img class="preview" id="snapPreview">';
+ document.getElementById('snapPreview').src=snap;
+ document.getElementById('storyBtn').style.display='inline-block';
+ document.getElementById('downloadBtn').style.display='inline-block';
+}
+function postStory(){
+ if(!snap)return;
+ cleanStories();stories.unshift({name:profile.name,data:snap,time:Date.now()});
+ save('avika_stories',stories);renderStories();renderProfile();notify('Story added! 24 hours में हट जाएगी।');
+}
+function downloadSnap(){
+ if(!snap)return;
+ let a=document.createElement('a');a.href=snap;a.download='AVIKA-Snap.jpg';a.click();
+}
+async function recordVideo(){
+ if(!stream){await startCamera();if(!stream)return}
+ let b=document.getElementById('recordBtn');
+ if(recorder?.state==='recording'){recorder.stop();b.textContent='🎥 Record Video';return}
+ try{
+ chunks=[];recorder=new MediaRecorder(stream);
+ recorder.ondataavailable=e=>{if(e.data.size)chunks.push(e.data)};
+ recorder.onstop=()=>{
+ let url=URL.createObjectURL(new Blob(chunks,{type:recorder.mimeType}));
+ let v=document.createElement('video');v.controls=true;v.src=url;v.style.width='100%';
+ let a=document.createElement('a');a.href=url;a.download='AVIKA-video.webm';a.textContent='Download Video';
+ let p=document.getElementById('previewArea');p.innerHTML='';p.append(v,a);
+ };
+ recorder.start();b.textContent='⏹ Stop Recording';
+ }catch(e){notify('Video recording उपलब्ध नहीं है।')}
+}
+function addFriend(){
+ let n=document.getElementById('friendName').value.trim();if(!n)return;
+ if(!friends.includes(n))friends.push(n);
+ save('avika_friends',friends);document.getElementById('friendName').value='';renderFriends();
+}
+function renderFriends(){
+ let el=document.getElementById('friendList');el.innerHTML='';
+ friends.forEach(n=>{
+ let d=document.createElement('p');d.textContent='👤 '+n+' ';
+ let b=document.createElement('button');b.className='btn';b.textContent='Chat';
+ b.onclick=()=>{document.getElementById('chatName').value=n;openChat();go('chat')};
+ d.appendChild(b);el.appendChild(d);
+ });
+}
+function openChat(){
+ let n=document.getElementById('chatName').value.trim();if(!n)return notify('Friend name लिखें');
+ currentChat=n;chats[n]??=[];save('avika_chats',chats);renderChat();
+}
+function renderChat(){
+ document.getElementById('chatTitle').textContent=currentChat?'Chat with '+currentChat:'Select a friend';
+ let el=document.getElementById('messages');el.innerHTML='';
+ (chats[currentChat]||[]).forEach(m=>{
+ let d=document.createElement('div');d.className='msg '+(m.from==='me'?'me':'');
+ if(m.type==='image'){let img=document.createElement('img');img.src=m.text;img.style.width='100%';d.appendChild(img)}
+ else d.textContent=m.text;
+ el.appendChild(d);
+ });
+ el.scrollTop=el.scrollHeight;
+ document.getElementById('streak').textContent=streaks[currentChat]?.count? '🔥 '+streaks[currentChat].count+' demo days':'Start chatting!';
+}
+function updateStreak(){
+ let s=streaks[currentChat]||{count:0,last:''};
+ let today=new Date().toDateString(),yesterday=new Date(Date.now()-86400000).toDateString();
+ if(s.last!==today){s.count=s.last===yesterday?s.count+1:1;s.last=today}
+ streaks[currentChat]=s;save('avika_streaks',streaks);
+}
+function sendMessage(){
+ let t=document.getElementById('message').value.trim();
+ if(!currentChat)return notify('पहले Chat खोलें');if(!t)return;
+ chats[currentChat].push({from:'me',text:t,type:'text'});
+ updateStreak();save('avika_chats',chats);document.getElementById('message').value='';renderChat();
+}
+function sendPhoto(e){
+ if(!currentChat)return notify('पहले Chat खोलें');
+ let f=e.target.files[0];if(!f)return;
+ if(f.size>1000000)return notify('1 MB से छोटी photo चुनें');
+ let r=new FileReader();r.onload=()=>{
+ chats[currentChat].push({from:'me',text:r.result,type:'image'});
+ updateStreak();save('avika_chats',chats);renderChat();
+ };r.readAsDataURL(f);e.target.value='';
+}
+function renderProfile(){
+ document.getElementById('profileName').textContent=profile.name;
+ document.getElementById('profileHandle').textContent='@'+profile.handle;
+ document.getElementById('editName').value=profile.name;
+ document.getElementById('editHandle').value=profile.handle;
+ document.getElementById('editBio').value=profile.bio;
+ document.getElementById('profilePhoto').src=profile.photo||'https://placehold.co/100x100/29293b/ffffff?text=AV';
+ document.getElementById('myStories').textContent=stories.filter(s=>s.name===profile.name).length+' active stories';
+}
+function saveProfile(){
+ profile.name=document.getElementById('editName').value.trim()||'AVIKA User';
+ profile.handle=document.getElementById('editHandle').value.trim().replace(/^@/,'')||'avika_user';
+ profile.bio=document.getElementById('editBio').value;
+ let f=document.getElementById('profileFile').files[0];
+ if(!f){save('avika_profile',profile);renderProfile();return notify('Profile saved!')}
+ if(f.size>1000000)return notify('1 MB से छोटी photo चुनें');
+ let r=new FileReader();r.onload=()=>{profile.photo=r.result;save('avika_profile',profile);renderProfile();notify('Profile saved!')};r.readAsDataURL(f);
+}
+cleanStories();renderStories();renderFriends();renderProfile();
+</script>
+</body>
+</html>
