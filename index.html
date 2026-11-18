@@ -54,6 +54,49 @@ body{background:radial-gradient(ellipse 900px 430px at 48% -180px,#7c3aed27,tran
 @media(max-width:980px){.shell{grid-template-columns:205px minmax(0,1fr);max-width:900px}.rightcol{display:none}}
 @media(max-width:680px){.topbar{height:64px;padding:0 17px}.topbar .brand{font-size:27px}.topbar .pill{display:none}.shell{margin:12px auto;padding:0 10px 105px}.card{padding:17px;border-radius:20px}.side{display:none}.bottom-nav{display:flex;gap:0;justify-content:space-around;border-top:1px solid var(--line);background:var(--nav);box-shadow:0 -12px 35px #0003;backdrop-filter:blur(24px);padding:10px 3px calc(11px + env(safe-area-inset-bottom))}.bottom-nav button{font-weight:700;font-size:10px;min-width:0;flex:1;padding:5px 0}.bottom-nav span{font-size:22px;margin-bottom:5px}.auth-wrap{margin:5vh 14px}.auth-card{padding:23px!important}.camera{max-height:62vh}}
 </style>
+<script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
+<style>
+/* AVIKA mobile-first editorial interface */
+:root{--bg:#08090d;--panel:#101116;--panel2:#1b1c23;--line:#252630;--accent:#f7f7fa;--pink:#e55b9c;--muted:#9b9da8;--nav:rgba(9,10,14,.96);--shadow:none}
+:root[data-theme="light"]{--bg:#fafafa;--panel:#fff;--panel2:#f1f1f4;--line:#e9e9ed;--accent:#17171b;--pink:#db428b;--nav:rgba(255,255,255,.96)}
+body{font-family:"DM Sans",system-ui,sans-serif;letter-spacing:-.15px}
+.brand{font-family:Outfit,sans-serif;font-size:28px;font-weight:900;letter-spacing:1.5px;background:none;color:var(--text)}
+.topbar{box-shadow:none}.top-actions .icon-btn{border:0;background:none;padding:8px}.top-actions .pill{display:none}
+.card,.right-card{box-shadow:none}.primary{background:var(--text);color:var(--bg);box-shadow:none}.primary:hover{opacity:.88}
+.post-media{max-height:none;object-fit:contain}.post-actions .action{background:transparent;border:0;padding:7px 10px 7px 0;font-size:15px}
+.bottom-nav button svg{display:block;margin:0 auto 4px;width:23px;height:23px;stroke-width:1.9}
+.bottom-nav button.active{color:var(--text)}
+@media(max-width:680px){
+ .topbar{height:54px;padding:0 17px;border-bottom:1px solid var(--line)}
+ .topbar .brand{font-size:25px;letter-spacing:1px}
+ .shell{margin:0;padding:0 0 78px;max-width:100%}
+ .page{padding:0 0 16px}
+ #home>.card:first-child{padding:13px 14px 5px;margin:0;background:transparent;border:0;border-radius:0}
+ #home>.card:first-child h2{font-size:14px;margin:0 0 11px}
+ #home>.card:first-child .pill{display:none}
+ #home>.card:first-child>.soft-btn{display:none}
+ .stories{gap:14px;padding:2px 0 10px}.story{flex-basis:69px;font-size:11px}.ring{width:63px;height:63px}
+ .story-add{min-width:65px;border:0;background:transparent;padding:5px 0;font-size:12px}
+ #home>.row.between{margin:0!important;padding:10px 15px 8px;border-top:1px solid var(--line)}
+ #home>.row.between h2{font-size:16px!important;font-weight:700!important}
+ #home>.row.between .small{display:none}
+ #home>.row.between .soft-btn{font-size:12px;padding:7px 9px;border:0;background:none}
+ #feed>.post{border-radius:0;border:0;border-bottom:1px solid var(--line);background:transparent;margin:0;padding:0}
+ .post-head{padding:11px 14px}.post-head .avatar{width:34px;height:34px}
+ .post-media{width:100%;border-radius:0;max-height:75vh;background:#000;object-fit:contain}
+ .post-body{padding:9px 14px 14px}.post-actions{margin-top:0}
+ .bottom-nav{height:calc(58px + env(safe-area-inset-bottom));align-items:flex-start;padding:8px 4px calc(4px + env(safe-area-inset-bottom));border-top:1px solid var(--line);box-shadow:none}
+ .bottom-nav button{flex:1;padding:0 1px;font-size:10px!important;min-width:0}
+ .bottom-nav span{display:none!important}
+ #reels,#snap{padding:0}
+ #reels>.card,#snap>.card{border:0;border-radius:0;margin:0;padding:12px;background:transparent}
+ #reelsFeed video{width:100%;max-height:75dvh;object-fit:contain;background:#000}
+ #snap .camera{width:100%;height:55dvh;max-height:none;object-fit:cover;background:#000;border-radius:20px}
+ #snap .post-actions{overflow-x:auto;flex-wrap:nowrap;padding:8px 0}
+ #snap .post-actions .action{white-space:nowrap;background:var(--panel2);border-radius:24px;padding:10px 14px}
+ #profile .card,#create .card,#chat .card,#search .card,#notifications .card{border:0;border-radius:0;background:transparent;margin:0;padding:17px}
+}
+</style>
 </head>
 <body>
 <header class="topbar">
@@ -93,7 +136,7 @@ body{background:radial-gradient(ellipse 900px 430px at 48% -180px,#7c3aed27,tran
 
   <main>
    <section class="page active" id="home">
-    <div class="card"><div class="row between"><h2>Stories</h2><span class="pill">24 HOURS</span></div><div class="stories" id="storyList"></div><button class="soft-btn full" onclick="go('create')">＋ Add to your story</button></div>
+    <div class="card"><div class="row between"><h2>Stories</h2><span class="pill">24 HOURS</span></div><div class="stories" id="storyList"></div></div>
     <div class="row between" style="margin:18px 3px"><div><h2 style="font:800 23px Outfit;margin:0">Discover your world</h2><div class="small">The moments worth sharing</div></div><button class="soft-btn" onclick="loadFeed()">↻ Refresh</button></div>
     <div id="feed"><div class="empty">Loading your feed…</div></div>
    </section>
@@ -117,7 +160,14 @@ body{background:radial-gradient(ellipse 900px 430px at 48% -180px,#7c3aed27,tran
 
   <aside class="rightcol"><div class="right-card"><div class="row"><img id="miniAvatar" class="avatar" src="https://placehold.co/80x80/30243e/ffffff?text=A"><div class="grow"><b id="miniName">Your profile</b><div class="small" id="miniUsername"></div></div></div><button class="soft-btn full" onclick="go('profile')">View profile</button></div><div class="right-card"><h3>AVIKA Community</h3><p class="muted small">Share moments, discover creators and stay connected.</p><div class="footer-note">Be kind. Respect privacy. Only upload media you have permission to share. Public media may be viewable by anyone with its link.</div></div><div class="right-card"><h3>Quick links</h3><button class="navitem" onclick="go('create')">＋ Create a post</button><button class="navitem" onclick="go('snap')">◎ Open camera</button><button class="navitem" onclick="toggleTheme()">◐ Change appearance</button></div></aside>
  </div>
- <nav class="bottom-nav"><button class="active" onclick="go('home',this)"><span>⌂</span>Home</button><button onclick="go('search',this)"><span>⌕</span>Explore</button><button onclick="go('reels',this)"><span>▶</span>Reels</button><button onclick="go('create',this)"><span>＋</span>Create</button><button onclick="go('chat',this)"><span>✉</span>Chat</button><button onclick="go('profile',this)"><span>◉</span>Me</button></nav>
+ <nav class="bottom-nav" aria-label="Main navigation">
+ <button class="active" data-page="home" onclick="go('home',this)"><i data-lucide="house"></i>Home</button>
+ <button data-page="search" onclick="go('search',this)"><i data-lucide="search"></i>Explore</button>
+ <button data-page="reels" onclick="go('reels',this)"><i data-lucide="clapperboard"></i>Reels</button>
+ <button data-page="snap" onclick="go('snap',this)"><i data-lucide="camera"></i>Camera</button>
+ <button data-page="chat" onclick="go('chat',this)"><i data-lucide="message-circle"></i>Chat</button>
+ <button data-page="profile" onclick="go('profile',this)"><i data-lucide="user-round"></i>Profile</button>
+ </nav>
 </div>
 
 <div id="storyModal" class="modal hidden" onclick="if(event.target===this)closeStory()"><div class="modal-box"><button class="close" onclick="closeStory()">✕</button><div id="storyContent" style="clear:both;text-align:center;padding-top:12px"></div></div></div>
@@ -177,5 +227,6 @@ async function logout(){stopCamera();await db.auth.signOut();currentUser=null;my
 db.auth.getSession().then(async({data,error})=>{if(error){msg(error.message);return}if(data.session){currentUser=data.session.user;try{await ensureProfile();await bootApp()}catch(e){msg('Login Error: '+e.message)}}});
 document.addEventListener('visibilitychange',()=>{if(document.hidden)stopCamera()});
 </script>
+<script>if(window.lucide)window.lucide.createIcons();</script>
 </body>
 </html>
