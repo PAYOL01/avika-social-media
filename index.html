@@ -355,7 +355,7 @@ async function connectInbox(){
  if(inboxRealtime){await db.removeChannel(inboxRealtime);inboxRealtime=null}
  if(!currentUser)return;
  inboxRealtime=db.channel('avika-inbox-'+currentUser.id)
- .on('postgres_changes',{event:'INSERT',schema:'public',table:'dm_messages'},({new:m})=>{if(m.receiver_id===currentUser.id){if(!chatUser||chatUser.id!==m.sender_id)alertUser('AVIKA','New message');else refreshMessages()}})
+ .on('postgres_changes',{event:'INSERT',schema:'public',table:'dm_messages'},({new:m})=>{if(m.receiver_id===currentUser.id){if(!chatUser||chatUser.id!==m.sender_id)alertUser('AVIKA','New message');else refreshMessages()}if(m.sender_id===currentUser.id||m.receiver_id===currentUser.id)scheduleRecentChats()})
  .on('postgres_changes',{event:'INSERT',schema:'public',table:'notifications'},({new:n})=>{if(n.user_id===currentUser.id){alertUser('AVIKA','New '+n.type);if($('notifications').classList.contains('active'))loadNotifications()}})
  .subscribe();
  await connectCallChannel();
@@ -484,7 +484,7 @@ sendMessage=async function(){await avikaSendBeforeRecent();scheduleRecentChats()
 const avikaOpenBeforeRecent=openChat;
 openChat=async function(user){await avikaOpenBeforeRecent(user);scheduleRecentChats()};
 const avikaInboxBeforeRecent=connectInbox;
-connectInbox=async function(){await avikaInboxBeforeRecent();if(inboxRealtime){inboxRealtime.on('postgres_changes',{event:'*',schema:'public',table:'dm_messages'},({new:m,old:o})=>{const x=m||o;if(x&&(x.sender_id===currentUser?.id||x.receiver_id===currentUser?.id))scheduleRecentChats()})}scheduleRecentChats()};
+connectInbox=async function(){await avikaInboxBeforeRecent();scheduleRecentChats()};
 const avikaRefreshBeforeRecent=refreshMessages;
 refreshMessages=async function(){await avikaRefreshBeforeRecent();scheduleRecentChats()};
 
