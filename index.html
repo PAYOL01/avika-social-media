@@ -663,5 +663,33 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
 })();
 </script>
+<style id="avika-pro-editor-css">
+#avikaProEditor{position:fixed;inset:0;z-index:220;background:#080810;color:white;display:none;flex-direction:column;padding:env(safe-area-inset-top) 10px env(safe-area-inset-bottom)}
+#avikaProEditor.show{display:flex}#avikaProEditor .probar{display:flex;align-items:center;gap:8px;padding:12px 3px;justify-content:space-between}#avikaProEditor button{background:#292536;color:#fff;border:1px solid #50465d;border-radius:12px;padding:10px 12px;font-size:13px}#avikaProEditor .editorcanvas{flex:1;min-height:0;display:grid;place-items:center;overflow:hidden}#avikaProEditor canvas{max-width:100%;max-height:100%;object-fit:contain;border-radius:12px;touch-action:none}#avikaProEditor .protools{display:flex;gap:8px;overflow-x:auto;padding:10px 0}#avikaProEditor .protools button{white-space:nowrap}#avikaProEditor .probar .proaccent{background:linear-gradient(100deg,#8256e8,#db4c97);border:0}
+#snap .avika-float-bottom{bottom:76px}#snap .avika-filter-dock{bottom:5px}#snap .avika-float-right{max-height:66%;overflow-y:auto;scrollbar-width:none}#snap .avika-float-right::-webkit-scrollbar{display:none}
+@media(max-width:680px){#avikaProEditor{padding-left:8px;padding-right:8px}#avikaProEditor .protools{padding-bottom:calc(12px + env(safe-area-inset-bottom))}}
+</style>
+<div id="avikaProEditor" role="dialog" aria-label="AVIKA Photo Editor" aria-modal="true">
+ <div class="probar"><button id="proClose">✕ Back</button><strong>AVIKA ✦ EDIT</strong><button id="proSave" class="proaccent">⬇ Save</button></div>
+ <div class="editorcanvas"><canvas id="proCanvas"></canvas></div>
+ <div class="protools"><button id="proText">Aa Text</button><button id="proHeart">❤️ Heart</button><button id="proCrown">👑 Crown</button><button id="proStar">✨ Stars</button><button id="proRotate">↻ Rotate</button><button id="proUndo">↶ Undo</button><button id="proClear">Reset</button><button id="proShare" class="proaccent">Share Photo</button></div>
+</div>
+<script id="avika-pro-editor-js">
+(function(){
+ const $=id=>document.getElementById(id);let photo=null,overlay=[],rotation=0,editing=false;
+ const canvas=()=> $('proCanvas'), ctx=()=>canvas().getContext('2d');
+ function redraw(){if(!photo)return;const c=canvas(),g=ctx();const sideways=Math.abs(rotation%180)===90;c.width=sideways?photo.height:photo.width;c.height=sideways?photo.width:photo.height;g.clearRect(0,0,c.width,c.height);g.save();g.translate(c.width/2,c.height/2);g.rotate(rotation*Math.PI/180);g.drawImage(photo,-photo.width/2,-photo.height/2);g.restore();overlay.forEach(item=>{g.textAlign='center';g.textBaseline='middle';g.font=`bold ${Math.max(30,c.width*.065)}px system-ui`;g.lineWidth=5;g.strokeStyle='#0009';g.strokeText(item.text,item.x*c.width,item.y*c.height);g.fillStyle='#fff';g.fillText(item.text,item.x*c.width,item.y*c.height)});}
+ function open(){const v=$('camera');if(!v||!v.videoWidth){window.msg?.('पहले Camera Enable करें।');return;}const c=document.createElement('canvas');c.width=v.videoWidth;c.height=v.videoHeight;const g=c.getContext('2d');const mirror=v.style.transform?.includes('scaleX(-1)');if(mirror){g.translate(c.width,0);g.scale(-1,1)}g.filter=v.style.filter||'none';g.drawImage(v,0,0,c.width,c.height);photo=new Image();photo.onload=()=>{overlay=[];rotation=0;redraw();$('avikaProEditor').classList.add('show');editing=true};photo.src=c.toDataURL('image/jpeg',.92)}
+ function close(){$('avikaProEditor').classList.remove('show');editing=false}
+ function save(){if(!photo)return;canvas().toBlob(blob=>{if(!blob)return;const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='AVIKA-Studio-'+Date.now()+'.png';a.click();setTimeout(()=>URL.revokeObjectURL(url),3000)},'image/png')}
+ function add(t){if(!photo)return;overlay.push({text:t,x:.5,y:.5});redraw()}
+ function setup(){if(!$('avikaProEditor'))return;
+ $('proClose').onclick=close;$('proSave').onclick=save;$('proText').onclick=()=>{const t=prompt('Photo पर क्या लिखना है?');if(t)add(t.slice(0,100))};$('proHeart').onclick=()=>add('❤️');$('proCrown').onclick=()=>add('👑');$('proStar').onclick=()=>add('✨');$('proRotate').onclick=()=>{rotation=(rotation+90)%360;redraw()};$('proUndo').onclick=()=>{overlay.pop();redraw()};$('proClear').onclick=()=>{overlay=[];rotation=0;redraw()};$('proShare').onclick=async()=>{if(!photo)return;canvas().toBlob(async blob=>{if(!blob)return;const f=new File([blob],'avika-photo.png',{type:'image/png'});if(navigator.canShare?.({files:[f]})){try{await navigator.share({files:[f],title:'AVIKA Photo'})}catch(e){if(e.name!=='AbortError')window.msg?.(e.message)}}else{save();window.msg?.('Photo saved. Gallery से Share करें।')}},'image/png')};
+ let active=null;canvas().addEventListener('pointerdown',e=>{if(!overlay.length)return;const r=canvas().getBoundingClientRect(),x=(e.clientX-r.left)/r.width,y=(e.clientY-r.top)/r.height;let best=-1,dist=Infinity;overlay.forEach((o,i)=>{let d=Math.hypot(o.x-x,o.y-y);if(d<dist){dist=d;best=i}});if(dist<.3){active=best;canvas().setPointerCapture(e.pointerId)}});canvas().addEventListener('pointermove',e=>{if(active===null)return;const r=canvas().getBoundingClientRect();overlay[active].x=Math.min(1,Math.max(0,(e.clientX-r.left)/r.width));overlay[active].y=Math.min(1,Math.max(0,(e.clientY-r.top)/r.height));redraw()});canvas().addEventListener('pointerup',()=>active=null);
+ const stage=document.querySelector('#snap .camera-stage');if(stage){const bottom=stage.querySelector('.avika-float-bottom');if(bottom){const b=document.createElement('button');b.type='button';b.className='avika-cam-btn';b.textContent='✎ Edit';b.title='Take photo and edit';b.onclick=open;bottom.prepend(b)}stage.addEventListener('dblclick',e=>{if(e.target.closest('button'))return;if(typeof flipCamera==='function')flipCamera()})}
+ document.addEventListener('keydown',e=>{if(e.key==='Escape'&&editing)close()});}
+ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',setup);else setup();
+})();
+</script>
 </body>
 </html>
