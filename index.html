@@ -164,6 +164,10 @@ html{scroll-padding-top:72px}body{background:var(--bg);letter-spacing:-.02em}but
 /* AVIKA Connect enhancements */
 .chat-tools{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}.chat-tools button{flex:1;min-width:85px}.call-overlay{position:fixed;inset:0;z-index:150;background:#05050aef;display:none;align-items:center;justify-content:center;padding:20px}.call-overlay.show{display:flex}.call-panel{width:min(520px,100%);padding:20px;background:var(--panel);border:1px solid var(--line);border-radius:26px;text-align:center}.call-video{width:100%;max-height:45vh;background:#000;border-radius:18px;object-fit:cover}.call-mini{width:110px;height:150px;object-fit:cover;border:2px solid white;border-radius:16px;position:absolute;right:24px;bottom:125px}.face-overlay{position:absolute;inset:0;pointer-events:none;overflow:hidden}.face-sticker{position:absolute;font-size:55px;transform:translate(-50%,-50%);filter:drop-shadow(0 3px 7px #0009)}.camera-stage{position:relative}.chat-status{font-size:12px;color:var(--muted);padding:5px}
 </style>
+<style>
+/* AVIKA Recent Chats */
+.recent-heading{display:flex;align-items:center;justify-content:space-between;margin:20px 0 7px}.recent-heading h3{margin:0!important;font-size:17px}.recent-heading .soft-btn{padding:7px 12px}.recent-chats{display:flex;flex-direction:column;gap:3px;margin-bottom:14px}.recent-chat{width:100%;display:flex;align-items:center;gap:12px;text-align:left;background:transparent;color:var(--text);padding:11px 8px;border-radius:14px;border:1px solid transparent}.recent-chat:hover,.recent-chat.selected{background:var(--panel2);border-color:var(--line)}.recent-chat .avatar{width:49px;height:49px;flex:none}.recent-chat-details{flex:1;min-width:0}.recent-chat-name{font-weight:750;font-size:14px}.recent-chat-preview{font-size:12px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:4px}.recent-chat-meta{display:flex;flex-direction:column;align-items:flex-end;gap:7px;font-size:10px;color:var(--muted)}.unread-badge{background:var(--pink);color:#fff;border-radius:99px;min-width:20px;height:20px;display:grid;place-items:center;padding:0 5px;font-weight:800;font-size:11px}.recent-empty{padding:20px 12px;color:var(--muted);text-align:center;font-size:13px}
+</style>
 </head>
 <body>
 <header class="topbar">
@@ -218,7 +222,7 @@ html{scroll-padding-top:72px}body{background:var(--bg);letter-spacing:-.02em}but
 
    <section class="page" id="snap"><div class="card camera-shell"><div class="row between camera-heading"><h2>Camera</h2><span class="pill">AVIKA STUDIO</span></div><div class="camera-stage"><video id="camera" class="camera" autoplay playsinline muted></video><div id="faceOverlay" class="face-overlay"></div><div class="camera-top"><span>✦ AVIKA</span><button class="camera-flip" onclick="flipCamera()" aria-label="Flip camera"><i data-lucide="refresh-ccw"></i></button></div><div class="camera-bottom"><button class="camera-shutter" onclick="captureSnap()" aria-label="Capture photo"><span></span></button></div></div><div class="row camera-start"><button class="soft-btn grow" onclick="startCamera()">Enable camera</button></div><p class="small">Live filters</p><div class="post-actions"><button class="action" onclick="setFilter('none')">Normal</button><button class="action" onclick="setFilter('brightness(1.12) saturate(1.3)')">Glow</button><button class="action" onclick="setFilter('sepia(.55)')">Vintage</button><button class="action" onclick="setFilter('grayscale(1)')">B&W</button><button class="action" onclick="setFilter('saturate(1.8)')">Vivid</button><button class="action" onclick="setFilter('hue-rotate(45deg)')">Dream</button></div><button class="soft-btn full" onclick="toggleFaceAR()">✨ Face-tracking lens (supported browsers)</button><p class="small">Stickers</p><div class="post-actions"><button class="action" onclick="setSticker('❤️')">❤️</button><button class="action" onclick="setSticker('🐶')">🐶</button><button class="action" onclick="setSticker('👑')">👑</button><button class="action" onclick="setSticker('😎')">😎</button><button class="action" onclick="setSticker('✨')">✨</button><button class="action" onclick="setSticker('')">Clear</button></div><input id="snapText" class="field" placeholder="Add text to your snap"><div id="preview"></div><p class="small">Camera access needs HTTPS and your permission. Face stickers use available face detection; advanced 3D AR lenses are not included.</p></div></section>
 
-   <section class="page" id="chat"><div class="card"><h2>Messages</h2><input id="chatSearch" class="field" placeholder="Find someone by username"><button class="soft-btn full" onclick="findChatUser()">Search people</button><div id="chatSearchResults"></div><div id="chatWindow" class="hidden"><div class="row between"><h3 id="chatWith"></h3><button class="soft-btn" onclick="chatUser=null;document.getElementById('chatWindow').classList.add('hidden')">Close</button></div><div class="chat-tools"><button class="soft-btn" onclick="startCall(false)">📞 Voice call</button><button class="soft-btn" onclick="startCall(true)">📹 Video call</button><button class="soft-btn" onclick="chooseChatMedia()">📎 Photo / Video</button></div><input type="file" id="chatMedia" accept="image/*,video/*" hidden onchange="sendChatMedia(this)"><div class="chat-status" id="chatStatus">Messages sync while both users are online.</div><div id="messages" class="messages"></div><textarea id="chatMessage" class="field" placeholder="Write a message…"></textarea><button class="primary full" onclick="sendMessage()">Send message</button><button class="soft-btn full" onclick="refreshMessages()">Refresh messages</button></div></div></section>
+   <section class="page" id="chat"><div class="card"><h2>Messages</h2><input id="chatSearch" class="field" placeholder="Find someone by username"><button class="soft-btn full" onclick="findChatUser()">Search people</button><div id="chatSearchResults"></div><div class="recent-heading"><h3>Recent chats</h3><button class="soft-btn" onclick="loadRecentChats()">↻</button></div><div id="recentChats" class="recent-chats"><div class="small">Loading conversations…</div></div><div id="chatWindow" class="hidden"><div class="row between"><h3 id="chatWith"></h3><button class="soft-btn" onclick="chatUser=null;document.getElementById('chatWindow').classList.add('hidden')">Close</button></div><div class="chat-tools"><button class="soft-btn" onclick="startCall(false)">📞 Voice call</button><button class="soft-btn" onclick="startCall(true)">📹 Video call</button><button class="soft-btn" onclick="chooseChatMedia()">📎 Photo / Video</button></div><input type="file" id="chatMedia" accept="image/*,video/*" hidden onchange="sendChatMedia(this)"><div class="chat-status" id="chatStatus">Messages sync while both users are online.</div><div id="messages" class="messages"></div><textarea id="chatMessage" class="field" placeholder="Write a message…"></textarea><button class="primary full" onclick="sendMessage()">Send message</button><button class="soft-btn full" onclick="refreshMessages()">Refresh messages</button></div></div></section>
 
    <section class="page" id="notifications"><div class="card"><div class="row between"><h2>Notifications</h2><button class="soft-btn" onclick="loadNotifications()">Refresh</button></div><button class="soft-btn full" onclick="enableAlerts()">🔔 Enable notifications</button><div id="notificationList"></div></div></section>
 
@@ -433,6 +437,55 @@ const previousStopCamera=stopCamera;
 stopCamera=function(){faceEnabled=false;clearInterval(faceTimer);clearInterval(mpTimer);mpTimer=null;const o=$('faceOverlay');if(o)o.innerHTML='';previousStopCamera()};
 
 if('serviceWorker'in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(e=>console.warn('SW:',e)))}
+
+// Recent conversations use existing dm_messages and profiles; no new table required.
+let recentChatRefreshTimer=null;
+async function loadRecentChats(){
+ const box=$('recentChats');if(!box||!currentUser)return;
+ try{
+  const uid=currentUser.id;
+  const {data,error}=await db.from('dm_messages').select('id,sender_id,receiver_id,content,created_at,is_read').or('sender_id.eq.'+uid+',receiver_id.eq.'+uid).order('created_at',{ascending:false}).limit(500);
+  if(error)throw error;
+  const chats=new Map();
+  for(const m of data||[]){
+   const other=m.sender_id===uid?m.receiver_id:m.sender_id;
+   if(!other||other===uid)continue;
+   if(!chats.has(other))chats.set(other,{last:m,unread:0});
+   if(m.receiver_id===uid&&m.is_read===false)chats.get(other).unread++;
+  }
+  const ids=[...chats.keys()];
+  if(!ids.length){box.innerHTML='<div class="recent-empty">No conversations yet. Search for a person above to start chatting.</div>';return}
+  const {data:users,error:profileError}=await db.from('profiles').select('id,username,display_name,avatar_url').in('id',ids);
+  if(profileError)throw profileError;
+  const userMap=new Map((users||[]).map(u=>[u.id,u]));
+  box.replaceChildren();
+  for(const id of ids){
+   const c=chats.get(id),u=userMap.get(id)||{id,username:'user',display_name:'AVIKA User'};
+   const b=document.createElement('button');b.type='button';b.className='recent-chat'+(chatUser?.id===id?' selected':'');
+   const photo=document.createElement('img');photo.className='avatar';photo.alt='';photo.src=avatar(u.avatar_url);
+   const details=document.createElement('div');details.className='recent-chat-details';
+   const name=document.createElement('div');name.className='recent-chat-name';name.textContent=u.display_name||('@'+u.username);
+   const preview=document.createElement('div');preview.className='recent-chat-preview';preview.textContent=(c.last.sender_id===uid?'You: ':'')+(c.last.content||'Media message');
+   details.append(name,preview);
+   const meta=document.createElement('div');meta.className='recent-chat-meta';
+   const when=document.createElement('span');const date=new Date(c.last.created_at);when.textContent=isNaN(date)?'':date.toLocaleDateString(undefined,{month:'short',day:'numeric'});meta.append(when);
+   if(c.unread){const unread=document.createElement('span');unread.className='unread-badge';unread.textContent=c.unread>99?'99+':String(c.unread);meta.append(unread)}
+   b.append(photo,details,meta);b.onclick=async()=>{await openChat(u);await loadRecentChats()};box.append(b);
+  }
+ }catch(e){box.textContent='Recent chats error: '+e.message}
+}
+function scheduleRecentChats(){clearTimeout(recentChatRefreshTimer);recentChatRefreshTimer=setTimeout(()=>{if(currentUser)loadRecentChats()},250)}
+const avikaGoBeforeRecent=go;
+go=function(id,btn){avikaGoBeforeRecent(id,btn);if(id==='chat')loadRecentChats()};
+const avikaSendBeforeRecent=sendMessage;
+sendMessage=async function(){await avikaSendBeforeRecent();scheduleRecentChats()};
+const avikaOpenBeforeRecent=openChat;
+openChat=async function(user){await avikaOpenBeforeRecent(user);scheduleRecentChats()};
+const avikaInboxBeforeRecent=connectInbox;
+connectInbox=async function(){await avikaInboxBeforeRecent();if(inboxRealtime){inboxRealtime.on('postgres_changes',{event:'*',schema:'public',table:'dm_messages'},({new:m,old:o})=>{const x=m||o;if(x&&(x.sender_id===currentUser?.id||x.receiver_id===currentUser?.id))scheduleRecentChats()})}scheduleRecentChats()};
+const avikaRefreshBeforeRecent=refreshMessages;
+refreshMessages=async function(){await avikaRefreshBeforeRecent();scheduleRecentChats()};
+
 </script>
 <script>if(window.lucide)window.lucide.createIcons();</script>
 </body>
