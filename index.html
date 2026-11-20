@@ -846,5 +846,58 @@ buttons.forEach(b=>b.addEventListener('click',()=>{current.textContent='✨ '+b.
 }if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>setTimeout(init,300));else setTimeout(init,300);
 })();
 </script>
+<style id="avika-clean-camera-v2">
+/* Camera-first UI: one unobstructed preview and one compact action row. */
+#snap .camera-stage{background:#050509!important;overflow:hidden!important}
+#snap .avika-float-top{top:12px;left:12px;right:12px;z-index:36}
+#snap .avika-float-top .avika-cam-btn{width:43px;height:43px;min-width:43px;padding:0;font-size:19px;border-radius:50%;background:#08090c85;border:1px solid #ffffff40;box-shadow:none}
+#snap .avika-float-top .avika-cam-btn:nth-child(2){width:auto;min-width:0;padding:0 14px;font-size:12px;letter-spacing:.1em;border-radius:30px}
+#snap .avika-float-right{right:12px;top:22%;transform:none;gap:12px;max-height:none;overflow:visible}
+#snap .avika-float-right .avika-cam-btn{width:43px;height:43px;min-width:43px;border:0;background:#0505056b;font-size:19px;border-radius:50%;padding:0}
+#snap .avika-float-right .avika-cam-btn:nth-child(n+4){display:none!important}
+#snap .avika-float-bottom{bottom:76px!important;left:16px;right:16px;gap:23px;z-index:35}
+#snap .avika-float-bottom .avika-cam-btn{background:#0007;border:0;border-radius:50%;height:42px;width:42px;min-width:42px;padding:0;font-size:19px}
+#snap .avika-float-bottom .avika-capture{height:76px;width:76px;min-width:76px;background:#ffffff24;border:5px solid white;box-shadow:0 0 0 2px #0006;font-size:34px}
+#snap .avika-float-bottom .avika-record{width:44px;height:44px;min-width:44px;background:#e73563;font-size:20px}
+#snap .avika-filter-dock{bottom:16px!important;left:12px;right:12px;z-index:35;justify-content:center;gap:7px;padding:2px 0;overflow-x:auto}
+#snap .avika-filter-dock .avika-cam-chip{font-size:11px;padding:7px 11px;background:#07070995;border:1px solid #ffffff45;min-width:0}
+#snap .avika-filter-dock .avika-cam-chip:nth-child(n+7){display:none!important}
+#snap .avika-filter-dock .avika-cam-chip.active{background:#e04b9e;border-color:#ffb7dc}
+#snap .ar-lens-bar,#snap .ar-lens-hint,#snap #avikaCamToast,#snap .ultra-launch{display:none!important}
+#snap .avika-cam-drawer{bottom:14px;top:auto;max-height:74%;border-radius:26px;background:#101018f5;z-index:65}
+#snap .camera-grid{pointer-events:none}
+#snap .avika-clean-tray{position:absolute;z-index:60;bottom:12px;left:10px;right:10px;max-height:53%;background:#11121beF;border:1px solid #ffffff35;border-radius:22px;padding:13px;color:white;box-shadow:0 15px 40px #0009;backdrop-filter:blur(24px);display:none;flex-direction:column;gap:10px}
+#snap .avika-clean-tray.open{display:flex}
+#snap .avika-clean-tray-header{display:flex;align-items:center;justify-content:space-between;font-weight:800}
+#snap .avika-clean-tray button{color:white;border:1px solid #ffffff30;background:#ffffff12;border-radius:13px;padding:10px;font-size:12px}
+#snap .avika-clean-tray-scroll{display:flex;gap:8px;overflow:auto;scrollbar-width:none;padding:5px 0}
+#snap .avika-clean-tray-scroll button{white-space:nowrap;flex-shrink:0}
+#snap .avika-clean-tray-scroll button.selected{background:#dc3d90}
+#snap .avika-clean-tray-footer{font-size:11px;color:#c9c9d5}
+@media(max-width:680px){#snap .camera-stage{height:100%!important}#snap .avika-float-bottom{bottom:83px!important}#snap .avika-filter-dock{bottom:22px!important}#snap .avika-float-right{top:20%}}
+</style>
+<script id="avika-clean-camera-v2-script">
+(()=>{'use strict';
+function init(){const stage=document.querySelector('#snap .camera-stage');if(!stage||stage.dataset.cleanV2)return;stage.dataset.cleanV2='1';
+ const top=stage.querySelector('.avika-float-top'),right=stage.querySelector('.avika-float-right'),bottom=stage.querySelector('.avika-float-bottom'),dock=stage.querySelector('.avika-filter-dock');if(!top||!right||!bottom||!dock)return;
+ const originalTop=top.querySelectorAll('button');if(originalTop[0]){originalTop[0].textContent='☰';originalTop[0].title='More camera tools'}
+ const originalRight=right.querySelectorAll('button');if(originalRight[0])originalRight[0].textContent='✨';
+ // Keep existing handlers for capture/record/flip; remove only redundant camera chrome.
+ const tray=document.createElement('div');tray.className='avika-clean-tray';tray.id='avikaCleanTray';tray.innerHTML='<div class="avika-clean-tray-header"><span id="avikaCleanTitle">✦ Lens Gallery</span><button type="button" id="avikaCleanClose" aria-label="Close">✕</button></div><div class="avika-clean-tray-scroll" id="avikaCleanOptions"></div><div class="avika-clean-tray-footer">Swipe to browse • Tap a look to apply</div>';stage.append(tray);
+ const options=tray.querySelector('#avikaCleanOptions');const title=tray.querySelector('#avikaCleanTitle');
+ function show(which){options.replaceChildren();title.textContent=which==='lens'?'✨ Face Lens Gallery':'🎨 Filter Gallery';const source=which==='lens'?stage.querySelector('.ar-lens-bar'):dock;
+ if(!source){options.textContent='Lens loading…';tray.classList.add('open');return;}
+ const buttons=[...source.querySelectorAll('button')];buttons.forEach(b=>{const clone=document.createElement('button');clone.type='button';clone.textContent=b.textContent;clone.addEventListener('click',()=>{b.click();options.querySelectorAll('button').forEach(x=>x.classList.remove('selected'));clone.classList.add('selected');tray.classList.remove('open')});options.append(clone)});
+ tray.classList.add('open');}
+ tray.querySelector('#avikaCleanClose').onclick=()=>tray.classList.remove('open');
+ const filterGallery=document.createElement('button');filterGallery.className='avika-cam-chip';filterGallery.textContent='◈ More';filterGallery.onclick=()=>show('filter');dock.append(filterGallery);
+ if(originalRight[0]){originalRight[0].addEventListener('click',e=>{e.stopImmediatePropagation();show('lens')},true)}
+ const lensBtn=document.createElement('button');lensBtn.type='button';lensBtn.className='avika-cam-btn';lensBtn.textContent='🦋';lensBtn.title='Face lenses';lensBtn.onclick=()=>show('lens');right.insertBefore(lensBtn,right.children[1]||null);
+ // On first open, prompt to enable camera only when permission has not yet been granted.
+ const cam=stage.querySelector('video');if(cam&&!cam.srcObject){const start=document.createElement('button');start.type='button';start.id='avikaStartOverlay';start.textContent='📷 Start Camera';start.style.cssText='position:absolute;z-index:32;top:50%;left:50%;transform:translate(-50%,-50%);background:#fff;color:#111;border-radius:999px;padding:13px 21px;font-weight:800';start.onclick=async()=>{try{await window.startCamera();if(cam.srcObject)start.remove()}catch(e){window.msg?.(e.message)}};stage.append(start);cam.addEventListener('playing',()=>start.remove(),{once:true})}
+}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
+})();
+</script>
 </body>
 </html>
