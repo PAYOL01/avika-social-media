@@ -5,7 +5,11 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#090812">
 <meta name="description" content="AVIKA — connect, share and discover">
-<title>AVIKA — Create • Connect • Discover</title>
+<title>AVIKA — Moments worth sharing</title>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="AVIKA">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%23090910'/%3E%3Ctext x='32' y='44' font-size='44' text-anchor='middle' font-family='Arial' font-weight='bold' fill='%23e779b2'%3Ea%3C/text%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Outfit:wght@500;600;700;800;900&display=swap" rel="stylesheet">
@@ -97,11 +101,74 @@ body{font-family:"DM Sans",system-ui,sans-serif;letter-spacing:-.15px}
  #profile .card,#create .card,#chat .card,#search .card,#notifications .card{border:0;border-radius:0;background:transparent;margin:0;padding:17px}
 }
 </style>
+<style>
+
+/* AVIKA VISION — comprehensive app experience */
+:root{--bg:#090a0f;--panel:#12131b;--panel2:#20212d;--text:#f6f4fa;--muted:#8f91a2;--line:#252633;--accent:#b18bff;--pink:#ff5c9b;--nav:rgba(12,12,18,.94);--shadow:0 16px 55px #0003}
+:root[data-theme="light"]{--bg:#f8f7fa;--panel:#fff;--panel2:#f0eef4;--text:#191723;--muted:#777687;--line:#eae8ef;--accent:#8154df;--pink:#d94583;--nav:rgba(255,255,255,.94);--shadow:0 12px 35px #29203a0b}
+body{background:var(--bg);font-family:"DM Sans",sans-serif;-webkit-font-smoothing:antialiased}
+.brand,.topbar .brand{font:900 31px Outfit,sans-serif;letter-spacing:-1.9px;color:var(--text);background:none;-webkit-text-fill-color:var(--text);text-transform:lowercase}
+.topbar .brand:before{content:none}.brand-dot{color:var(--pink);-webkit-text-fill-color:var(--pink)}
+.topbar{height:68px;background:var(--nav);border-color:var(--line);box-shadow:none}.header-create{display:grid;place-items:center}.top-actions{gap:10px}.top-actions .icon-btn{display:grid;place-items:center;color:var(--text);background:transparent;border:0;padding:9px}.top-actions svg{width:23px;height:23px;stroke-width:1.8}
+.shell{max-width:1260px;grid-template-columns:218px minmax(0,650px) 270px;gap:24px;margin-top:24px}.side-menu,.right-card{border-radius:20px;box-shadow:none}.side-menu{padding:10px}.navitem{font-weight:650!important;border-radius:13px!important}.navitem.active{background:var(--panel2)!important;color:var(--text)!important;box-shadow:none;outline:none;border-left:3px solid var(--pink)}
+.card{border-radius:20px;background:var(--panel);box-shadow:none;border:1px solid var(--line)}
+.primary{background:linear-gradient(120deg,#9065f2,#e052a1);color:white;box-shadow:0 8px 24px #9b62ea2a}.primary:hover{filter:brightness(1.08)}
+.story-panel{padding:18px 18px 12px}.story-heading h2{font-size:18px;letter-spacing:-.5px}.story-heading .pill{font-size:9px}.stories{gap:15px;padding:12px 0 6px;scrollbar-width:none}.story{flex:0 0 70px;color:var(--text);font-weight:600;font-size:11px;overflow:hidden;text-overflow:ellipsis}.ring{width:64px;height:64px;margin-bottom:7px;padding:2.5px;background:conic-gradient(from 35deg,#fca85c,#ff529f,#a36cff,#fca85c)}.ring img{border:3px solid var(--panel)}
+.story-add{min-width:70px;width:70px;height:87px;padding:0;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;gap:4px;border:0;background:transparent;color:var(--text);font-size:0}.story-add:before{content:'+';display:grid;place-items:center;font-size:29px;font-weight:400;width:60px;height:60px;border:1.5px dashed var(--muted);border-radius:50%;background:var(--panel2)}.story-add:after{content:'Your story';font-size:11px;font-weight:600}
+.feed-heading{margin:20px 4px 16px!important}.feed-heading h2{font:800 24px Outfit,sans-serif;margin:0;letter-spacing:-.8px}.heading-spark{font-size:17px;color:var(--pink)}.feed-heading .small{margin-top:2px}.refresh-round{border-radius:50%;width:38px;height:38px;display:grid;place-items:center;padding:0}.refresh-round svg{width:18px}
+#feed>.post{padding:0;overflow:hidden}.post-head{padding:13px 15px}.post-head .avatar{width:39px;height:39px}.post-head b{font-size:13px}.post-head .small{font-size:10px;margin-top:3px}.post-head>.action{font-size:18px;border:0;background:none;padding:5px}.post-media{width:100%;height:auto;max-height:690px;object-fit:contain;background:#050507;border-radius:0!important}.post-body{padding:11px 15px 15px}.post-actions{gap:3px;margin:0 0 7px;align-items:center}.post-actions .action{border:0;background:none;padding:7px 11px 7px 0;font-size:13px;font-weight:650}.post-actions .action svg{width:23px;height:23px;vertical-align:middle;stroke-width:1.8}.post-actions .action.liked{color:#ff5c90}.post-actions .action .count{font-size:12px;margin-left:4px}.post-actions .share-action{margin-left:auto;padding-right:0}.caption{font-size:13px;line-height:1.5;margin:8px 0 0}.post-stats{font-size:12px;font-weight:700;margin:4px 0 7px}.post-time{font-size:10px;color:var(--muted);margin-top:8px}.post-actions .delete-action{color:var(--muted);font-size:11px}
+.reels-shell{padding:0;overflow:hidden}.reels-heading{padding:15px 17px;margin:0}.reels-heading h2{margin:0}.reel-item{position:relative;height:min(78dvh,780px);min-height:420px;background:#000;overflow:hidden;scroll-snap-align:start;border-bottom:3px solid var(--bg)}.reel-item video{height:100%;width:100%;object-fit:contain;border-radius:0!important;max-height:none!important}.reel-info{position:absolute;bottom:26px;left:18px;right:76px;color:white;text-shadow:0 1px 10px #000c;pointer-events:none}.reel-info strong{font-size:15px}.reel-info p{font-size:12px;line-height:1.5}.reel-controls{position:absolute;right:12px;bottom:35px;display:flex;flex-direction:column;gap:16px}.reel-controls button{background:#17171a88;color:white;border-radius:50%;width:45px;height:45px;display:grid;place-items:center;backdrop-filter:blur(9px)}.reel-controls svg{width:24px}.reels-shell #reelsFeed{scroll-snap-type:y mandatory}
+.camera-shell{padding:14px}.camera-heading{padding:2px 4px 12px}.camera-heading h2{margin:0}.camera-stage{position:relative;background:#000;border-radius:25px;overflow:hidden;height:min(72dvh,710px);min-height:370px}.camera-stage .camera{height:100%;width:100%;max-height:none;aspect-ratio:auto;object-fit:cover;border-radius:0;box-shadow:none}.camera-top{position:absolute;top:18px;left:18px;right:18px;display:flex;align-items:center;justify-content:space-between;color:#fff;font-weight:900;letter-spacing:1px;text-shadow:0 2px 12px #000}.camera-flip{background:#0007;border:1px solid #fff5;color:#fff;width:40px;height:40px;border-radius:50%;display:grid;place-items:center}.camera-bottom{position:absolute;bottom:24px;left:0;right:0;display:flex;justify-content:center;pointer-events:none}.camera-shutter{pointer-events:auto;width:76px;height:76px;border-radius:50%;border:4px solid #fff;background:#ffffff25;display:grid;place-items:center;padding:5px;box-shadow:0 0 0 3px #0005}.camera-shutter span{width:100%;height:100%;border-radius:50%;background:#fff}.camera-start{margin-top:12px}.camera-start .soft-btn{border-radius:13px}
+#profile .profile-cover{height:155px;border-radius:18px;background:radial-gradient(circle at 72% 18%,#ff76b0 0,transparent 28%),radial-gradient(circle at 20% 85%,#6e52d7 0,transparent 50%),linear-gradient(120deg,#25223d,#7347aa)!important}.profile-top{margin-top:-48px}.profile-top .avatar{width:100px;height:100px;border:5px solid var(--panel);box-shadow:0 4px 20px #0003}.stats{justify-content:space-evenly}.stats b{font-size:22px}.grid-posts{gap:3px}.grid-posts img,.grid-posts video{border-radius:3px}
+#chat .messages{border:0;background:var(--bg);height:48dvh;min-height:300px}.bubble{border-radius:18px 18px 18px 5px;font-size:13px;line-height:1.45}.bubble.mine{border-radius:18px 18px 5px 18px;background:linear-gradient(120deg,#8455dc,#c052b3)}
+#search .field,#chat .field{border-radius:16px}.auth-card{border-radius:26px;box-shadow:0 20px 70px #0003}.auth-logo .brand{font-size:47px}
+.bottom-nav button{transition:color .18s,transform .18s}.bottom-nav button.active{color:var(--text)!important;transform:none}.bottom-nav button.active svg{stroke:var(--pink)}
+@media(max-width:980px){.shell{grid-template-columns:190px minmax(0,650px);max-width:900px}.rightcol{display:none}}
+@media(max-width:680px){
+ .topbar{height:58px;padding:0 16px}.topbar .brand{font-size:29px}.top-actions{gap:3px}.top-actions .icon-btn{padding:8px}.shell{display:block;margin:0;padding:0 0 calc(76px + env(safe-area-inset-bottom));max-width:100%}.side,.rightcol{display:none}.page{padding:0 0 10px}
+ #home>.story-panel{padding:13px 0 7px 14px;margin:0;border:0;border-radius:0;background:var(--bg)}.story-heading{padding-right:15px}.story-heading h2{font-size:15px;margin:0}.story-heading .pill{border:0;background:none}.stories{gap:12px;padding:12px 0 5px}.story{flex-basis:65px}.ring{width:62px;height:62px}.story-add{width:65px;min-width:65px}
+ .feed-heading{margin:0!important;padding:14px 15px 12px;border-top:1px solid var(--line)}.feed-heading h2{font-size:21px}.feed-heading .small{font-size:10px}.refresh-round{width:34px;height:34px}
+ #feed>.post{border:0!important;border-radius:0!important;margin:0 0 8px!important;background:var(--bg);border-bottom:1px solid var(--line)!important}.post-head{padding:10px 13px}.post-head .avatar{width:36px;height:36px}.post-media{max-height:72dvh!important;object-fit:contain;border-radius:0!important}.post-body{padding:9px 13px 13px}.post-actions{margin:0 0 4px}.post-actions .action{padding:7px 9px 7px 0}.post-actions .action svg{width:23px;height:23px}.caption{font-size:12.5px}
+ .bottom-nav{display:flex;height:calc(64px + env(safe-area-inset-bottom));padding:9px 5px calc(6px + env(safe-area-inset-bottom));align-items:center;justify-content:space-around;box-shadow:0 -8px 25px #0002;border-top:1px solid var(--line);background:var(--nav)}.bottom-nav button{display:flex;flex:1;flex-direction:column;align-items:center;gap:4px;font-size:10px!important;font-weight:650;color:var(--muted);padding:2px 0}.bottom-nav button svg{width:23px;height:23px;margin:0}.bottom-nav .nav-label{display:block;font-size:10px}.bottom-nav button[data-page="snap"]{color:var(--pink)}.bottom-nav button[data-page="snap"] svg{width:27px;height:27px}
+ #reels,#snap{padding:0}.reels-shell{border:0!important;border-radius:0!important;padding:0!important;margin:0!important}.reels-heading{padding:10px 15px}.reel-item{height:calc(100dvh - 135px);min-height:360px}.reel-info{bottom:25px}.camera-shell{border:0!important;border-radius:0!important;padding:0!important;background:var(--bg)!important}.camera-heading{display:none}.camera-stage{height:calc(100dvh - 122px);min-height:360px;border-radius:0}.camera-stage .camera{border-radius:0!important;height:100%!important;max-height:none!important}.camera-start{padding:0 12px}.camera-shell>.small,.camera-shell>.post-actions,.camera-shell>#snapText,.camera-shell>#preview{margin-left:12px;margin-right:12px}
+ #profile .card,#create .card,#chat .card,#search .card,#notifications .card{padding:16px!important;margin:0!important;border:0!important;border-radius:0!important;background:var(--bg)!important}.profile-cover{margin:0!important}.auth-wrap{margin:5vh 10px}
+}
+
+</style>
+<style>
+
+/* AVIKA ATELIER — unified premium app layer */
+:root{--bg:#08090e;--panel:#101119;--panel2:#1b1c29;--text:#f8f7fc;--muted:#9393a5;--line:#242431;--accent:#a78bfa;--pink:#fb6ca8;--nav:rgba(8,9,14,.91);--shadow:none}
+:root[data-theme="light"]{--bg:#f9f9fc;--panel:#fff;--panel2:#f0eff7;--text:#171521;--muted:#777589;--line:#e9e7ef;--accent:#7454c8;--pink:#e14e8d;--nav:rgba(255,255,255,.92)}
+html{scroll-padding-top:72px}body{background:var(--bg);letter-spacing:-.02em}button{touch-action:manipulation}button:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px solid var(--accent);outline-offset:3px}button:active{transform:scale(.97)}
+.topbar{border-bottom:1px solid color-mix(in srgb,var(--line),transparent 25%);background:var(--nav);backdrop-filter:blur(24px)}.topbar .brand{font-weight:900;letter-spacing:-2px}.brand-dot{filter:drop-shadow(0 0 9px #f46da755)}
+.card,.right-card,.side-menu{border-color:var(--line)}.side-menu{background:var(--panel)}.navitem.active{background:linear-gradient(95deg,#ad80f222,#e96ba615)!important;color:var(--text)!important;outline:1px solid #a78bfa30}.navitem.active .navicon{color:var(--pink)}
+.story-panel{background:transparent;border:0}.stories{overscroll-behavior-x:contain}.ring{background:linear-gradient(35deg,#ffbf69,#f65b96 52%,#9773f8);box-shadow:0 0 0 1px #ff80b51c}.ring img{border-color:var(--bg)}.story-add:before{background:linear-gradient(140deg,#a478f7,#f36da8);color:#fff;box-shadow:0 8px 18px #b66be833}
+.feed-heading h2{font-weight:800}.post{background:var(--panel)}.post-head .avatar{border:1px solid #ffffff25}.post-media{background:#050508}.post-body{padding-top:12px}.post-actions{display:flex;align-items:center;gap:12px}.post-actions .action{display:inline-flex;align-items:center;gap:5px;font-weight:650}.post-actions .action.liked{color:#ff5e91}.post-actions .action:hover{color:var(--pink)}.caption{line-height:1.55;font-size:13px}.post-head .small{opacity:.85}
+.primary{background:linear-gradient(110deg,#9469ee,#e25b9b);border-radius:14px;color:#fff;font-weight:750;box-shadow:0 10px 24px #965dec22}.soft-btn{border-radius:13px}.field{background:var(--panel2)!important;border:1px solid var(--line)!important;border-radius:14px!important}.field:focus{border-color:var(--accent)!important}.pill{letter-spacing:.09em}
+.reel-item{background:#000}.reel-item video{object-fit:cover}.reel-info{background:linear-gradient(0deg,#000a,transparent);padding-top:35px}.camera-stage{background:#020204}.camera-shutter{box-shadow:0 0 0 5px #ffffff45,0 8px 35px #0007}.camera-stage video{object-fit:cover}
+.profile-cover{background:radial-gradient(circle at 78% 15%,#ff8cbd 0,transparent 29%),radial-gradient(circle at 25% 80%,#a07dff 0,transparent 42%),linear-gradient(135deg,#2d254e,#73529c)!important}.profile-top .avatar{box-shadow:0 6px 25px #0003}.grid-posts{gap:3px}.grid-posts img,.grid-posts video{border-radius:3px}.messages{scrollbar-width:thin}.bubble{box-shadow:0 3px 9px #0001}.bubble.mine{background:linear-gradient(120deg,#8764ed,#cc5d9d)}
+.auth-card{background:var(--panel);border:1px solid var(--line)}.auth-logo .brand{letter-spacing:-2px}.bottom-nav{backdrop-filter:blur(22px)}.bottom-nav button{position:relative}.bottom-nav button.active svg{stroke:var(--pink);stroke-width:2.4}.bottom-nav button.active:after{content:'';position:absolute;bottom:-4px;left:calc(50% - 3px);width:6px;height:6px;border-radius:50%;background:var(--pink)}
+@media(min-width:681px){.shell{grid-template-columns:210px minmax(0,620px) 260px;gap:24px}.post-media{max-height:660px}.side-menu{padding:11px}.right-card{padding:19px}}
+@media(max-width:680px){
+ .topbar{height:59px;padding:0 16px}.topbar .brand{font-size:30px}.shell{padding-bottom:calc(72px + env(safe-area-inset-bottom))}.page{animation:avikaEnter .22s ease both}@keyframes avikaEnter{from{opacity:.6;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
+ #home>.story-panel{padding:13px 0 10px 14px}.story-heading h2{font-size:15px}.stories{padding:11px 0 8px;gap:14px}.story{flex-basis:69px}.ring{width:65px;height:65px}.feed-heading{padding:13px 14px 10px}.feed-heading h2{font-size:20px}
+ #feed>.post{margin-bottom:5px!important}.post-head{padding:11px 14px}.post-media{max-height:75dvh!important;object-fit:contain!important;border-radius:0!important}.post-body{padding:10px 14px 16px}.post-actions{gap:9px}.post-actions .action{font-size:13px!important;padding:7px 8px 7px 0!important}.caption{margin:5px 0 9px}
+ .bottom-nav{height:calc(65px + env(safe-area-inset-bottom));padding:8px 4px calc(6px + env(safe-area-inset-bottom));box-shadow:0 -8px 25px #0002}.bottom-nav button{font-size:10px!important;letter-spacing:-.02em}.bottom-nav button svg{width:24px;height:24px;margin-bottom:4px}.bottom-nav button.active:after{bottom:-1px}
+ .reel-item{height:calc(100dvh - 126px);min-height:350px}.camera-stage{height:calc(100dvh - 250px);min-height:340px;border-radius:23px}.camera-shell{padding:12px!important}.camera-heading{padding-bottom:10px}
+ #profile .card,#create .card,#chat .card,#search .card,#notifications .card{padding:14px!important}.profile-cover{height:145px!important}.profile-top .avatar{width:94px;height:94px}.grid-posts{gap:2px}.grid-posts img,.grid-posts video{border-radius:1px}
+}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+
+
+/* AVIKA Connect enhancements */
+.chat-tools{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}.chat-tools button{flex:1;min-width:85px}.call-overlay{position:fixed;inset:0;z-index:150;background:#05050aef;display:none;align-items:center;justify-content:center;padding:20px}.call-overlay.show{display:flex}.call-panel{width:min(520px,100%);padding:20px;background:var(--panel);border:1px solid var(--line);border-radius:26px;text-align:center}.call-video{width:100%;max-height:45vh;background:#000;border-radius:18px;object-fit:cover}.call-mini{width:110px;height:150px;object-fit:cover;border:2px solid white;border-radius:16px;position:absolute;right:24px;bottom:125px}.face-overlay{position:absolute;inset:0;pointer-events:none;overflow:hidden}.face-sticker{position:absolute;font-size:55px;transform:translate(-50%,-50%);filter:drop-shadow(0 3px 7px #0009)}.camera-stage{position:relative}.chat-status{font-size:12px;color:var(--muted);padding:5px}
+</style>
 </head>
 <body>
 <header class="topbar">
- <div class="brand">AVIKA</div>
- <div class="top-actions"><span class="pill">YOUR SOCIAL UNIVERSE</span><button class="icon-btn" id="themeBtn" onclick="toggleTheme()" aria-label="Toggle theme">☀️</button><button class="icon-btn" onclick="go('notifications')" aria-label="Notifications">🔔</button></div>
+ <div class="brand">avika<span class="brand-dot">.</span></div>
+ <div class="top-actions"><button class="icon-btn header-create" onclick="go('create')" aria-label="Create post"><i data-lucide="square-plus"></i></button><span class="pill">YOUR SOCIAL UNIVERSE</span><button class="icon-btn" id="themeBtn" onclick="toggleTheme()" aria-label="Toggle theme">☀️</button><button class="icon-btn" onclick="go('notifications')" aria-label="Notifications">🔔</button></div>
 </header>
 <div id="status" class="status hidden" role="status"></div>
 
@@ -136,8 +203,8 @@ body{font-family:"DM Sans",system-ui,sans-serif;letter-spacing:-.15px}
 
   <main>
    <section class="page active" id="home">
-    <div class="card"><div class="row between"><h2>Stories</h2><span class="pill">24 HOURS</span></div><div class="stories" id="storyList"></div></div>
-    <div class="row between" style="margin:18px 3px"><div><h2 style="font:800 23px Outfit;margin:0">Discover your world</h2><div class="small">The moments worth sharing</div></div><button class="soft-btn" onclick="loadFeed()">↻ Refresh</button></div>
+    <div class="card story-panel"><div class="row between story-heading"><h2>Moments</h2><span class="pill">LIVE STORIES</span></div><div class="stories" id="storyList"></div></div>
+    <div class="row between feed-heading"><div><h2>For you <span class="heading-spark">✦</span></h2><div class="small">Fresh from your community</div></div><button class="soft-btn refresh-round" onclick="loadFeed()" aria-label="Refresh"><i data-lucide="refresh-cw"></i></button></div>
     <div id="feed"><div class="empty">Loading your feed…</div></div>
    </section>
 
@@ -147,13 +214,13 @@ body{font-family:"DM Sans",system-ui,sans-serif;letter-spacing:-.15px}
    </section>
 
    <section class="page" id="search"><div class="card"><h2>Explore people</h2><input id="searchInput" class="field" placeholder="Search by username…" oninput="searchUsers()"><div id="searchResults"></div></div></section>
-   <section class="page" id="reels"><div class="card"><div class="row between"><h2>Reels</h2><span class="pill">SHORT VIDEOS</span></div><p class="muted">Discover videos shared as posts. This view filters video posts from your existing feed.</p><div id="reelsFeed"></div></div></section>
+   <section class="page" id="reels"><div class="card reels-shell"><div class="row between reels-heading"><h2>Reels</h2><span class="pill">FOR YOU</span></div><div id="reelsFeed"></div></div></section>
 
-   <section class="page" id="snap"><div class="card"><div class="row between"><h2>AVIKA Camera</h2><span class="pill">SNAP STUDIO</span></div><video id="camera" class="camera" autoplay playsinline muted></video><div class="row"><button class="primary grow" onclick="startCamera()">Start camera</button><button class="soft-btn" onclick="flipCamera()">Flip</button></div><p class="small">Live filters</p><div class="post-actions"><button class="action" onclick="setFilter('none')">Normal</button><button class="action" onclick="setFilter('brightness(1.12) saturate(1.3)')">Glow</button><button class="action" onclick="setFilter('sepia(.55)')">Vintage</button><button class="action" onclick="setFilter('grayscale(1)')">B&W</button><button class="action" onclick="setFilter('saturate(1.8)')">Vivid</button><button class="action" onclick="setFilter('hue-rotate(45deg)')">Dream</button></div><p class="small">Stickers</p><div class="post-actions"><button class="action" onclick="setSticker('❤️')">❤️</button><button class="action" onclick="setSticker('🐶')">🐶</button><button class="action" onclick="setSticker('👑')">👑</button><button class="action" onclick="setSticker('😎')">😎</button><button class="action" onclick="setSticker('✨')">✨</button><button class="action" onclick="setSticker('')">Clear</button></div><input id="snapText" class="field" placeholder="Add text to your snap"><button class="primary full" onclick="captureSnap()">Capture photo</button><div id="preview"></div><p class="small">Camera access needs HTTPS and your permission. These are visual filters, not face-tracking AR effects.</p></div></section>
+   <section class="page" id="snap"><div class="card camera-shell"><div class="row between camera-heading"><h2>Camera</h2><span class="pill">AVIKA STUDIO</span></div><div class="camera-stage"><video id="camera" class="camera" autoplay playsinline muted></video><div id="faceOverlay" class="face-overlay"></div><div class="camera-top"><span>✦ AVIKA</span><button class="camera-flip" onclick="flipCamera()" aria-label="Flip camera"><i data-lucide="refresh-ccw"></i></button></div><div class="camera-bottom"><button class="camera-shutter" onclick="captureSnap()" aria-label="Capture photo"><span></span></button></div></div><div class="row camera-start"><button class="soft-btn grow" onclick="startCamera()">Enable camera</button></div><p class="small">Live filters</p><div class="post-actions"><button class="action" onclick="setFilter('none')">Normal</button><button class="action" onclick="setFilter('brightness(1.12) saturate(1.3)')">Glow</button><button class="action" onclick="setFilter('sepia(.55)')">Vintage</button><button class="action" onclick="setFilter('grayscale(1)')">B&W</button><button class="action" onclick="setFilter('saturate(1.8)')">Vivid</button><button class="action" onclick="setFilter('hue-rotate(45deg)')">Dream</button></div><button class="soft-btn full" onclick="toggleFaceAR()">✨ Face-tracking lens (supported browsers)</button><p class="small">Stickers</p><div class="post-actions"><button class="action" onclick="setSticker('❤️')">❤️</button><button class="action" onclick="setSticker('🐶')">🐶</button><button class="action" onclick="setSticker('👑')">👑</button><button class="action" onclick="setSticker('😎')">😎</button><button class="action" onclick="setSticker('✨')">✨</button><button class="action" onclick="setSticker('')">Clear</button></div><input id="snapText" class="field" placeholder="Add text to your snap"><div id="preview"></div><p class="small">Camera access needs HTTPS and your permission. These are visual filters, not face-tracking AR effects.</p></div></section>
 
-   <section class="page" id="chat"><div class="card"><h2>Messages</h2><input id="chatSearch" class="field" placeholder="Find someone by username"><button class="soft-btn full" onclick="findChatUser()">Search people</button><div id="chatSearchResults"></div><div id="chatWindow" class="hidden"><div class="row between"><h3 id="chatWith"></h3><button class="soft-btn" onclick="chatUser=null;document.getElementById('chatWindow').classList.add('hidden')">Close</button></div><div id="messages" class="messages"></div><textarea id="chatMessage" class="field" placeholder="Write a message…"></textarea><button class="primary full" onclick="sendMessage()">Send message</button><button class="soft-btn full" onclick="refreshMessages()">Refresh messages</button></div></div></section>
+   <section class="page" id="chat"><div class="card"><h2>Messages</h2><input id="chatSearch" class="field" placeholder="Find someone by username"><button class="soft-btn full" onclick="findChatUser()">Search people</button><div id="chatSearchResults"></div><div id="chatWindow" class="hidden"><div class="row between"><h3 id="chatWith"></h3><button class="soft-btn" onclick="chatUser=null;document.getElementById('chatWindow').classList.add('hidden')">Close</button></div><div class="chat-tools"><button class="soft-btn" onclick="startCall(false)">📞 Voice call</button><button class="soft-btn" onclick="startCall(true)">📹 Video call</button><button class="soft-btn" onclick="chooseChatMedia()">📎 Photo / Video</button></div><input type="file" id="chatMedia" accept="image/*,video/*" hidden onchange="sendChatMedia(this)"><div class="chat-status" id="chatStatus">Messages sync while both users are online.</div><div id="messages" class="messages"></div><textarea id="chatMessage" class="field" placeholder="Write a message…"></textarea><button class="primary full" onclick="sendMessage()">Send message</button><button class="soft-btn full" onclick="refreshMessages()">Refresh messages</button></div></div></section>
 
-   <section class="page" id="notifications"><div class="card"><div class="row between"><h2>Notifications</h2><button class="soft-btn" onclick="loadNotifications()">Refresh</button></div><div id="notificationList"></div></div></section>
+   <section class="page" id="notifications"><div class="card"><div class="row between"><h2>Notifications</h2><button class="soft-btn" onclick="loadNotifications()">Refresh</button></div><button class="soft-btn full" onclick="enableAlerts()">🔔 Enable device alerts (while app is open)</button><div id="notificationList"></div></div></section>
 
    <section class="page" id="profile"><div class="card"><div class="profile-cover"></div><div class="profile-top"><img id="profileAvatar" class="avatar" src="https://placehold.co/160x160/30243e/ffffff?text=A"><h2 id="profileName" style="margin:8px 0 2px"></h2><div id="profileUsername" class="muted"></div><p id="profileBio"></p></div><div class="stats" id="profileStats"></div><hr style="border:0;border-top:1px solid var(--line)"><h3>Edit profile</h3><label class="small">Profile photo</label><input id="avatarFile" class="field" type="file" accept="image/*"><input id="editName" class="field" placeholder="Display name"><textarea id="editBio" class="field" maxlength="300" placeholder="Write your bio"></textarea><button class="primary full" onclick="saveProfile()">Save profile</button><h3 style="margin-top:24px">My posts</h3><div id="myPosts" class="grid-posts"></div><button class="soft-btn full" onclick="logout()">Log out</button></div></section>
   </main>
@@ -161,16 +228,16 @@ body{font-family:"DM Sans",system-ui,sans-serif;letter-spacing:-.15px}
   <aside class="rightcol"><div class="right-card"><div class="row"><img id="miniAvatar" class="avatar" src="https://placehold.co/80x80/30243e/ffffff?text=A"><div class="grow"><b id="miniName">Your profile</b><div class="small" id="miniUsername"></div></div></div><button class="soft-btn full" onclick="go('profile')">View profile</button></div><div class="right-card"><h3>AVIKA Community</h3><p class="muted small">Share moments, discover creators and stay connected.</p><div class="footer-note">Be kind. Respect privacy. Only upload media you have permission to share. Public media may be viewable by anyone with its link.</div></div><div class="right-card"><h3>Quick links</h3><button class="navitem" onclick="go('create')">＋ Create a post</button><button class="navitem" onclick="go('snap')">◎ Open camera</button><button class="navitem" onclick="toggleTheme()">◐ Change appearance</button></div></aside>
  </div>
  <nav class="bottom-nav" aria-label="Main navigation">
- <button class="active" data-page="home" onclick="go('home',this)"><i data-lucide="house"></i>Home</button>
- <button data-page="search" onclick="go('search',this)"><i data-lucide="search"></i>Explore</button>
- <button data-page="reels" onclick="go('reels',this)"><i data-lucide="clapperboard"></i>Reels</button>
- <button data-page="snap" onclick="go('snap',this)"><i data-lucide="camera"></i>Camera</button>
- <button data-page="chat" onclick="go('chat',this)"><i data-lucide="message-circle"></i>Chat</button>
- <button data-page="profile" onclick="go('profile',this)"><i data-lucide="user-round"></i>Profile</button>
+ <button class="active" data-page="home" onclick="go('home',this)"><i data-lucide="house"></i><span class="nav-label">Home</span></button>
+ <button data-page="search" onclick="go('search',this)"><i data-lucide="search"></i><span class="nav-label">Explore</span></button>
+ <button data-page="reels" onclick="go('reels',this)"><i data-lucide="clapperboard"></i><span class="nav-label">Reels</span></button>
+ <button data-page="snap" onclick="go('snap',this)"><i data-lucide="camera"></i><span class="nav-label">Camera</span></button>
+ <button data-page="chat" onclick="go('chat',this)"><i data-lucide="message-circle"></i><span class="nav-label">Chat</span></button>
+ <button data-page="profile" onclick="go('profile',this)"><i data-lucide="user-round"></i><span class="nav-label">Profile</span></button>
  </nav>
 </div>
 
-<div id="storyModal" class="modal hidden" onclick="if(event.target===this)closeStory()"><div class="modal-box"><button class="close" onclick="closeStory()">✕</button><div id="storyContent" style="clear:both;text-align:center;padding-top:12px"></div></div></div>
+<div class="call-overlay" id="callOverlay"><div class="call-panel"><h2 id="callTitle">AVIKA Call</h2><p id="callState" class="muted">Connecting…</p><div style="position:relative"><video id="remoteCallVideo" class="call-video" autoplay playsinline></video><video id="localCallVideo" class="call-mini" autoplay playsinline muted></video></div><div class="chat-tools"><button class="primary" id="acceptCallBtn" onclick="acceptCall()" style="display:none">Accept</button><button class="soft-btn" onclick="endCall()">End call</button></div></div></div><div id="storyModal" class="modal hidden" onclick="if(event.target===this)closeStory()"><div class="modal-box"><button class="close" onclick="closeStory()">✕</button><div id="storyContent" style="clear:both;text-align:center;padding-top:12px"></div></div></div>
 
 <script>
 const SUPABASE_URL="https://csarrgheuzybigifblny.supabase.co";
@@ -188,15 +255,31 @@ async function submitAuth(){const email=$('email').value.trim(),password=$('pass
 async function forgotPassword(){const email=$('email').value.trim();if(!email)return msg('पहले Email Address भरें।');try{const {error}=await db.auth.resetPasswordForEmail(email,{redirectTo:location.origin+location.pathname});if(error)throw error;msg('Password reset link email पर भेज दिया गया।')}catch(e){msg('Reset Error: '+e.message)}}
 async function ensureProfile(){const {data,error}=await db.from('profiles').select('*').eq('id',currentUser.id).maybeSingle();if(error)throw error;if(!data){const meta=currentUser.user_metadata||{},username=meta.username||('user_'+currentUser.id.slice(0,8));const {error:e}=await db.from('profiles').insert({id:currentUser.id,username,display_name:meta.full_name||'AVIKA User'});if(e)throw e}}
 async function bootApp(){const {data,error}=await db.from('profiles').select('*').eq('id',currentUser.id).single();if(error)throw error;myProfile=data;$('auth').classList.add('hidden');$('app').classList.remove('hidden');await Promise.all([loadProfile(),loadFeed(),loadStories()]);msg('Welcome to AVIKA! ✨')}
-function go(id,btn){document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));$(id).classList.add('active');document.querySelectorAll('.navitem,.bottom-nav button').forEach(b=>b.classList.remove('active'));if(btn)btn.classList.add('active');else document.querySelectorAll(`[data-page="${id}"]`).forEach(b=>b.classList.add('active'));if(id!=='snap')stopCamera();if(id==='snap')startCamera();if(id==='home'){loadFeed();loadStories()}if(id==='profile')loadProfile();if(id==='notifications')loadNotifications();if(id==='reels')loadReels()}
+function go(id,btn){document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));$(id).classList.add('active');document.querySelectorAll('.navitem,.bottom-nav button').forEach(b=>b.classList.remove('active'));document.querySelectorAll(`[data-page="${id}"]`).forEach(b=>b.classList.add('active'));if(id!=='snap')stopCamera();if(id==='snap')startCamera();if(id==='home'){loadFeed();loadStories()}if(id==='profile')loadProfile();if(id==='notifications')loadNotifications();if(id==='reels')loadReels();if(window.lucide)window.lucide.createIcons()}
 async function uploadFile(file,folder){if(!file)throw Error('पहले File चुनें।');if(file.size>50*1024*1024)throw Error('File 50 MB से छोटी होनी चाहिए।');if(!file.type.startsWith('image/')&&!file.type.startsWith('video/'))throw Error('केवल image या video upload करें।');const ext=(file.name.split('.').pop()||'jpg').toLowerCase().replace(/[^a-z0-9]/g,'');const path=currentUser.id+'/'+folder+'/'+Date.now()+'_'+Math.random().toString(36).slice(2)+'.'+ext;const {error}=await db.storage.from('avika-media').upload(path,file,{upsert:false,contentType:file.type});if(error)throw error;return db.storage.from('avika-media').getPublicUrl(path).data.publicUrl}
 async function createPost(){try{const file=$('postFile').files[0],url=await uploadFile(file,'posts'),type=file.type.startsWith('video/')?'video':'image';const {error}=await db.from('posts').insert({user_id:currentUser.id,media_url:url,media_type:type,caption:$('postCaption').value.trim()});if(error)throw error;$('postFile').value='';$('postCaption').value='';msg('Post publish हो गई!');go('home')}catch(e){msg('Post Error: '+e.message)}}
 async function createStory(){try{const file=$('storyFile').files[0],url=await uploadFile(file,'stories'),type=file.type.startsWith('video/')?'video':'image';const {error}=await db.from('stories').insert({user_id:currentUser.id,media_url:url,media_type:type,expires_at:new Date(Date.now()+86400000).toISOString()});if(error)throw error;$('storyFile').value='';msg('Story 24 घंटे के लिए share हो गई!');await loadStories()}catch(e){msg('Story Error: '+e.message)}}
 async function getProfiles(ids){if(!ids.length)return[];const {data,error}=await db.from('profiles').select('id,username,display_name,avatar_url').in('id',[...new Set(ids)]);if(error)throw error;return data||[]}
 function mediaMarkup(p){return p.media_type==='video'?`<video class="post-media" src="${esc(p.media_url)}" controls playsinline preload="metadata"></video>`:`<img class="post-media" src="${esc(p.media_url)}" loading="lazy" alt="AVIKA post">`}
-async function renderPosts(container,posts){container.innerHTML='';if(!posts.length){container.innerHTML='<div class="card empty">Nothing here yet. Be the first to share a moment!</div>';return}const profiles=await getProfiles(posts.map(p=>p.user_id));const ids=posts.map(p=>p.id);const [{data:likes},{data:comments}]=await Promise.all([db.from('likes').select('post_id,user_id').in('post_id',ids),db.from('comments').select('post_id').in('post_id',ids)]);for(const p of posts){const owner=profiles.find(x=>x.id===p.user_id),liked=(likes||[]).some(x=>x.post_id===p.id&&x.user_id===currentUser.id),count=(likes||[]).filter(x=>x.post_id===p.id).length,cc=(comments||[]).filter(x=>x.post_id===p.id).length;const el=document.createElement('article');el.className='card post';el.innerHTML=`<div class="post-head"><img class="avatar" src="${esc(avatar(owner?.avatar_url))}"><div class="grow"><b>${esc(owner?.display_name||owner?.username||'AVIKA User')}</b><div class="small">@${esc(owner?.username||'user')} · ${new Date(p.created_at).toLocaleString()}</div></div><button class="action" onclick="reportPost('${p.id}')">•••</button></div>${mediaMarkup(p)}<div class="post-body"><div class="caption">${esc(p.caption||'')}</div><div class="post-actions"><button class="action ${liked?'liked':''}" onclick="toggleLike('${p.id}')">${liked?'♥':'♡'} ${count}</button><button class="action" onclick="showComments('${p.id}')">▢ Comments (${cc})</button><button class="action" onclick="sharePost('${p.id}')">↗ Share</button>${p.user_id===currentUser.id?`<button class="action" onclick="deletePost('${p.id}')">Delete</button>`:''}</div><div id="comments-${p.id}"></div></div>`;container.appendChild(el)}}
+async function renderPosts(container,posts){
+ container.innerHTML='';
+ if(!posts.length){container.innerHTML=`<div class="card empty">Your feed is waiting for its first moment. <button class="primary full" onclick="go('create')">Create a post</button></div>`;return}
+ const profiles=await getProfiles(posts.map(p=>p.user_id));const ids=posts.map(p=>p.id);
+ const [{data:likes,error:le},{data:comments,error:ce}]=await Promise.all([db.from('likes').select('post_id,user_id').in('post_id',ids),db.from('comments').select('post_id').in('post_id',ids)]);
+ if(le)console.warn('Likes:',le.message);if(ce)console.warn('Comments:',ce.message);
+ const profileMap=new Map(profiles.map(x=>[x.id,x]));const counts=new Map(),commentCounts=new Map(),mine=new Set();
+ for(const l of likes||[]){counts.set(l.post_id,(counts.get(l.post_id)||0)+1);if(l.user_id===currentUser.id)mine.add(l.post_id)}
+ for(const c of comments||[])commentCounts.set(c.post_id,(commentCounts.get(c.post_id)||0)+1);
+ for(const p of posts){const u=profileMap.get(p.user_id),liked=mine.has(p.id),count=counts.get(p.id)||0,cc=commentCounts.get(p.id)||0;
+ const el=document.createElement('article');el.className='card post';
+ const heart=liked?'heart':'heart',likeText=liked?'Unlike':'Like';
+ el.innerHTML=`<div class="post-head"><img class="avatar" src="${esc(avatar(u?.avatar_url))}" alt=""><div class="grow"><b>${esc(u?.display_name||u?.username||'AVIKA User')}</b><div class="small">@${esc(u?.username||'user')}</div></div><button class="action" aria-label="Report post" onclick="reportPost('${p.id}')">···</button></div>${mediaMarkup(p)}<div class="post-body"><div class="post-actions"><button class="action ${liked?'liked':''}" aria-label="${likeText}" onclick="toggleLike('${p.id}')"><i data-lucide="${heart}" ${liked?'fill="currentColor"':''}></i></button><button class="action" aria-label="Comments" onclick="showComments('${p.id}')"><i data-lucide="message-circle"></i></button><button class="action share-action" aria-label="Share" onclick="sharePost('${p.id}')"><i data-lucide="send"></i></button>${p.user_id===currentUser.id?`<button class="action delete-action" onclick="deletePost('${p.id}')">Delete</button>`:''}</div><div class="post-stats">${count} ${count===1?'like':'likes'} <span class="muted"> · ${cc} comments</span></div>${p.caption?`<div class="caption"><b>${esc(u?.username||'user')}</b> ${esc(p.caption)}</div>`:''}<div class="post-time">${new Date(p.created_at).toLocaleString()}</div><div id="comments-${p.id}"></div></div>`;
+ container.appendChild(el)
+ }
+ if(window.lucide)window.lucide.createIcons();
+}
 async function loadFeed(){const box=$('feed');box.innerHTML='<div class="empty">Loading feed…</div>';try{const {data,error}=await db.from('posts').select('*').order('created_at',{ascending:false}).limit(50);if(error)throw error;await renderPosts(box,data||[])}catch(e){box.innerHTML='<div class="empty">Feed Error: '+esc(e.message)+'</div>'}}
-async function loadReels(){const box=$('reelsFeed');box.innerHTML='<div class="empty">Loading videos…</div>';try{const {data,error}=await db.from('posts').select('*').eq('media_type','video').order('created_at',{ascending:false}).limit(40);if(error)throw error;await renderPosts(box,data||[])}catch(e){box.textContent='Reels Error: '+e.message}}
+async function loadReels(){const box=$('reelsFeed');box.innerHTML='<div class="empty">Loading reels…</div>';try{const {data,error}=await db.from('posts').select('*').eq('media_type','video').order('created_at',{ascending:false}).limit(40);if(error)throw error;box.innerHTML='';if(!data?.length){box.innerHTML='<div class="empty">No reels yet. Share a video to start.</div>';return}const profiles=await getProfiles(data.map(p=>p.user_id));for(const p of data){const u=profiles.find(x=>x.id===p.user_id);const el=document.createElement('div');el.className='reel-item';el.innerHTML=`<video src="${esc(p.media_url)}" controls playsinline preload="metadata" loop></video><div class="reel-info"><strong>@${esc(u?.username||'user')}</strong><p>${esc(p.caption||'')}</p></div><div class="reel-controls"><button aria-label="Like" onclick="toggleLike('${p.id}')"><i data-lucide="heart"></i></button><button aria-label="Share" onclick="sharePost('${p.id}')"><i data-lucide="send"></i></button></div>`;box.appendChild(el)}if(window.lucide)window.lucide.createIcons()}catch(e){box.textContent='Reels Error: '+e.message}}
 async function toggleLike(postId){try{const {data,error}=await db.from('likes').select('id').eq('post_id',postId).eq('user_id',currentUser.id).maybeSingle();if(error)throw error;if(data){const {error:e}=await db.from('likes').delete().eq('id',data.id);if(e)throw e}else{const {error:e}=await db.from('likes').insert({post_id:postId,user_id:currentUser.id});if(e)throw e;const {data:p}=await db.from('posts').select('user_id').eq('id',postId).single();if(p&&p.user_id!==currentUser.id)await notify(p.user_id,'like',postId)}await loadFeed();if($('reels').classList.contains('active'))await loadReels()}catch(e){msg('Like Error: '+e.message)}}
 async function showComments(postId){const box=$('comments-'+postId);if(!box)return;box.innerHTML=`<input class="field" id="commentText-${postId}" placeholder="Write a comment…"><button class="primary" onclick="addComment('${postId}')">Send</button><div id="commentList-${postId}"></div>`;try{const {data,error}=await db.from('comments').select('content,user_id,created_at').eq('post_id',postId).order('created_at');if(error)throw error;const profiles=await getProfiles((data||[]).map(c=>c.user_id));for(const c of data||[]){const u=profiles.find(x=>x.id===c.user_id),p=document.createElement('p');p.innerHTML='<b>@'+esc(u?.username||'user')+'</b> '+esc(c.content);$('commentList-'+postId).appendChild(p)}}catch(e){box.textContent='Comment Error: '+e.message}}
 async function addComment(postId){try{const input=$('commentText-'+postId),content=input.value.trim();if(!content)return;const {error}=await db.from('comments').insert({post_id:postId,user_id:currentUser.id,content});if(error)throw error;const {data:p}=await db.from('posts').select('user_id').eq('id',postId).single();if(p&&p.user_id!==currentUser.id)await notify(p.user_id,'comment',postId);await showComments(postId);msg('Comment sent.')}catch(e){msg('Comment Error: '+e.message)}}
@@ -226,6 +309,115 @@ async function publishSnap(){if(!pendingSnap)return;try{const url=await uploadFi
 async function logout(){stopCamera();await db.auth.signOut();currentUser=null;myProfile=null;$('app').classList.add('hidden');$('auth').classList.remove('hidden');msg('Logged out.')}
 db.auth.getSession().then(async({data,error})=>{if(error){msg(error.message);return}if(data.session){currentUser=data.session.user;try{await ensureProfile();await bootApp()}catch(e){msg('Login Error: '+e.message)}}});
 document.addEventListener('visibilitychange',()=>{if(document.hidden)stopCamera()});
+
+// AVIKA CONNECT: online chat, in-app alerts and WebRTC signaling.
+let chatRealtime=null, inboxRealtime=null, callChannel=null, peer=null, localCallStream=null, activeCall=null, pendingOffer=null, callCandidates=[];
+const rtcConfig={iceServers:[{urls:'stun:stun.l.google.com:19302'},{urls:'stun:stun1.l.google.com:19302'}]};
+function channelKey(a,b){return [a,b].sort().join('_')}
+async function connectChatRealtime(){
+ if(chatRealtime){await db.removeChannel(chatRealtime);chatRealtime=null}
+ if(!currentUser||!chatUser)return;
+ chatRealtime=db.channel('avika-dm-'+channelKey(currentUser.id,chatUser.id))
+  .on('postgres_changes',{event:'INSERT',schema:'public',table:'dm_messages'},payload=>{
+    const m=payload.new;
+    if(m&&(m.sender_id===currentUser.id&&m.receiver_id===chatUser.id||m.sender_id===chatUser.id&&m.receiver_id===currentUser.id))refreshMessages();
+  }).subscribe(status=>{const el=$('chatStatus');if(el)el.textContent=status==='SUBSCRIBED'?'● Live chat connected':'Chat: '+status});
+}
+const previousOpenChat=openChat;
+openChat=async function(user){await previousOpenChat(user);await connectChatRealtime();};
+function chooseChatMedia(){$('chatMedia').click()}
+async function sendChatMedia(input){
+ try{if(!chatUser)return msg('Open a chat first');const f=input.files[0];if(!f)return;
+ const url=await uploadFile(f,'dm');
+ // Media URLs are sent as a normal message to avoid altering existing table schema.
+ const {error}=await db.from('dm_messages').insert({sender_id:currentUser.id,receiver_id:chatUser.id,content:(f.type.startsWith('image/')?'📷 Photo: ':'🎬 Video: ')+url});
+ if(error)throw error;await refreshMessages();msg('Media sent');
+ }catch(e){msg('Media: '+e.message)}finally{input.value=''}
+}
+const previousRefreshMessages=refreshMessages;
+refreshMessages=async function(){await previousRefreshMessages();const box=$('messages');if(!box)return;
+ box.querySelectorAll('.bubble').forEach(b=>{
+ const raw=b.textContent||'';const match=raw.match(/^(📷 Photo: |🎬 Video: )(https:\/\/\S+)$/);if(!match)return;
+ try{const u=new URL(match[2]);if(u.protocol!=='https:')return;
+ b.textContent='';const media=document.createElement(match[1].startsWith('📷')?'img':'video');media.src=u.href;media.style.cssText='max-width:100%;max-height:300px;border-radius:12px';if(media.tagName==='VIDEO'){media.controls=true;media.playsInline=true}b.append(media);
+ }catch(e){}
+ });
+};
+function alertUser(title,body){if(document.hidden&&'Notification'in window&&Notification.permission==='granted')new Notification(title,{body});else msg(title+' — '+body)}
+async function enableAlerts(){if(!('Notification'in window))return msg('Notifications not supported here');const permission=await Notification.requestPermission();msg(permission==='granted'?'Alerts enabled while AVIKA is open':'Notification permission: '+permission)}
+async function connectInbox(){
+ if(inboxRealtime){await db.removeChannel(inboxRealtime);inboxRealtime=null}
+ if(!currentUser)return;
+ inboxRealtime=db.channel('avika-inbox-'+currentUser.id)
+ .on('postgres_changes',{event:'INSERT',schema:'public',table:'dm_messages'},({new:m})=>{if(m.receiver_id===currentUser.id){if(!chatUser||chatUser.id!==m.sender_id)alertUser('AVIKA','New message');else refreshMessages()}})
+ .on('postgres_changes',{event:'INSERT',schema:'public',table:'notifications'},({new:n})=>{if(n.user_id===currentUser.id){alertUser('AVIKA','New '+n.type);if($('notifications').classList.contains('active'))loadNotifications()}})
+ .subscribe();
+ await connectCallChannel();
+}
+const oldBootApp=bootApp;
+bootApp=async function(){await oldBootApp();await connectInbox()};
+async function connectCallChannel(){
+ if(callChannel){await db.removeChannel(callChannel);callChannel=null}
+ callChannel=db.channel('avika-call-'+currentUser.id,{config:{broadcast:{ack:true}}})
+ .on('broadcast',{event:'signal'},async({payload:p})=>{
+ if(!p||p.to!==currentUser.id)return;
+ if(p.type==='offer'){
+ if(activeCall){await sendSignal(p.from,{type:'busy'});return}
+ activeCall={userId:p.from,video:p.video,incoming:true};pendingOffer=p.offer;callCandidates=[];
+ $('callOverlay').classList.add('show');$('callTitle').textContent='Incoming '+(p.video?'video':'voice')+' call';$('callState').textContent='Incoming call…';$('acceptCallBtn').style.display='inline-block';
+ }else if(activeCall&&p.from===activeCall.userId){
+ try{if(p.type==='answer'&&peer){await peer.setRemoteDescription(p.answer);await flushCandidates();$('callState').textContent='Connected / connecting…'}
+ else if(p.type==='ice'){if(peer?.remoteDescription)await peer.addIceCandidate(p.candidate);else callCandidates.push(p.candidate)}
+ else if(p.type==='hangup'||p.type==='busy'){msg(p.type==='busy'?'User is busy':'Call ended');await closeCall(false)}}catch(e){msg('Call signaling: '+e.message)}
+ }
+ }).subscribe();
+}
+async function sendSignal(to,payload){const channel=db.channel('avika-call-'+to);await new Promise(resolve=>channel.subscribe(s=>{if(s==='SUBSCRIBED')resolve()}));const result=await channel.send({type:'broadcast',event:'signal',payload:{...payload,from:currentUser.id,to}});await db.removeChannel(channel);if(result!=='ok')throw Error('Signaling failed: '+result)}
+async function makePeer(){
+ peer=new RTCPeerConnection(rtcConfig);
+ peer.onicecandidate=async e=>{if(e.candidate&&activeCall)try{await sendSignal(activeCall.userId,{type:'ice',candidate:e.candidate.toJSON()})}catch(err){console.warn(err)}};
+ peer.ontrack=e=>{$('remoteCallVideo').srcObject=e.streams[0];$('callState').textContent='Call connected'};
+ peer.onconnectionstatechange=()=>{if(peer)$('callState').textContent='Connection: '+peer.connectionState};
+ localCallStream=await navigator.mediaDevices.getUserMedia({audio:true,video:activeCall.video});
+ $('localCallVideo').srcObject=localCallStream;
+ localCallStream.getTracks().forEach(t=>peer.addTrack(t,localCallStream));
+}
+async function flushCandidates(){for(const c of callCandidates)await peer.addIceCandidate(c);callCandidates=[]}
+async function startCall(video){
+ if(!chatUser||!currentUser)return msg('Choose a person first');if(activeCall)return msg('A call is already active');
+ activeCall={userId:chatUser.id,video,incoming:false};$('callOverlay').classList.add('show');$('callTitle').textContent=video?'Video call':'Voice call';$('callState').textContent='Calling…';$('acceptCallBtn').style.display='none';
+ try{await makePeer();const offer=await peer.createOffer();await peer.setLocalDescription(offer);await sendSignal(chatUser.id,{type:'offer',offer:peer.localDescription.toJSON(),video})}
+ catch(e){msg('Call: '+e.message);await closeCall(false)}
+}
+async function acceptCall(){if(!activeCall||!pendingOffer)return;
+ $('acceptCallBtn').style.display='none';$('callState').textContent='Connecting…';
+ try{await makePeer();await peer.setRemoteDescription(pendingOffer);await flushCandidates();const answer=await peer.createAnswer();await peer.setLocalDescription(answer);await sendSignal(activeCall.userId,{type:'answer',answer:peer.localDescription.toJSON()});pendingOffer=null}
+ catch(e){msg('Call: '+e.message);await endCall()}
+}
+async function closeCall(notify){const target=activeCall?.userId;activeCall=null;pendingOffer=null;callCandidates=[];
+ if(peer){peer.close();peer=null}if(localCallStream){localCallStream.getTracks().forEach(t=>t.stop());localCallStream=null}
+ $('remoteCallVideo').srcObject=null;$('localCallVideo').srcObject=null;$('callOverlay').classList.remove('show');
+ if(notify&&target)try{await sendSignal(target,{type:'hangup'})}catch(e){console.warn(e)}
+}
+async function endCall(){await closeCall(true)}
+const previousLogout=logout;
+logout=async function(){await closeCall(true);if(chatRealtime)await db.removeChannel(chatRealtime);if(inboxRealtime)await db.removeChannel(inboxRealtime);if(callChannel)await db.removeChannel(callChannel);await previousLogout()};
+// FaceDetector is experimental: enable only where browser provides it.
+let faceTimer=null,faceEnabled=false;
+async function toggleFaceAR(){
+ if(faceEnabled){faceEnabled=false;clearInterval(faceTimer);$('faceOverlay').innerHTML='';msg('Face lens off');return}
+ if(!('FaceDetector'in window)){msg('Face tracking is not supported by this browser. Basic stickers still work.');return}
+ try{const detector=new FaceDetector({fastMode:true,maxDetectedFaces:1});faceEnabled=true;msg('Face tracking on');
+ faceTimer=setInterval(async()=>{const v=$('camera');if(!faceEnabled||!cameraStream||!v.videoWidth)return;
+ try{const faces=await detector.detect(v);const o=$('faceOverlay');o.innerHTML='';if(!faces.length)return;
+ const r=faces[0].boundingBox,scaleX=o.clientWidth/v.videoWidth,scaleY=o.clientHeight/v.videoHeight;
+ const mark=document.createElement('div');mark.className='face-sticker';mark.textContent=sticker||'👑';mark.style.left=((r.x+r.width/2)*scaleX)+'px';mark.style.top=((r.y-r.height*.15)*scaleY)+'px';o.append(mark);
+ }catch(e){}},250)
+ }catch(e){faceEnabled=false;msg('Face detection unavailable: '+e.message)}
+}
+const previousStopCamera=stopCamera;
+stopCamera=function(){faceEnabled=false;clearInterval(faceTimer);const o=$('faceOverlay');if(o)o.innerHTML='';previousStopCamera()};
+
 </script>
 <script>if(window.lucide)window.lucide.createIcons();</script>
 </body>
