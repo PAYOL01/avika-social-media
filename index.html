@@ -691,5 +691,59 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',setup);else setup();
 })();
 </script>
+
+<style id="avika-ultra-css">
+#avikaUltraPanel{position:fixed;z-index:210;inset:0;background:#050509e8;display:none;align-items:center;justify-content:center;padding:18px;backdrop-filter:blur(18px)}
+#avikaUltraPanel.show{display:flex}#avikaUltraPanel .ultra-sheet{width:min(530px,100%);max-height:85dvh;overflow:auto;background:var(--panel);color:var(--text);border:1px solid var(--line);border-radius:25px;padding:18px;box-shadow:0 20px 80px #0009}
+#avikaUltraPanel .ultra-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:10px}#avikaUltraPanel .ultra-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}#avikaUltraPanel button{border:1px solid var(--line);background:var(--panel2);color:var(--text);border-radius:14px;padding:13px 8px;text-align:left;font-weight:650}#avikaUltraPanel button:active{transform:scale(.97)}#avikaUltraPanel .ultra-close{padding:9px 13px}#avikaUltraPanel .ultra-sub{font-size:12px;color:var(--muted);margin:12px 0}
+#snap .ultra-launch{position:absolute;z-index:25;left:12px;top:62px;border:1px solid #ffffff70;background:#0009;color:white;border-radius:18px;padding:10px 13px;font-weight:800;backdrop-filter:blur(12px)}
+#avikaUltraPanel .ultra-note{font-size:11px;color:var(--muted);margin-top:12px;line-height:1.6}
+#avikaCamToast{position:absolute;z-index:26;top:110px;left:50%;transform:translateX(-50%);background:#000a;color:white;padding:7px 12px;border-radius:30px;white-space:nowrap;font-size:12px;pointer-events:none}
+#chat .ultra-chat-help{display:flex;gap:8px;align-items:center;color:var(--muted);font-size:11px;margin-top:5px}
+@media(max-width:680px){#avikaUltraPanel .ultra-sheet{border-radius:22px;padding:15px}#snap .ultra-launch{top:62px;left:8px;padding:9px 11px}}
+</style>
+<div id="avikaUltraPanel" role="dialog" aria-modal="true" aria-label="AVIKA Studio Pro tools">
+ <div class="ultra-sheet"><div class="ultra-head"><strong style="font-size:20px">✦ AVIKA ULTRA STUDIO</strong><button class="ultra-close" id="ultraClose">✕ Close</button></div>
+ <p class="ultra-sub">एक जगह Camera के सभी Quick Tools • Camera Preview पर वापस जाने के लिए Close दबाएँ</p>
+ <div class="ultra-grid" id="ultraTools"></div><div class="ultra-note">Beauty looks रंग और रोशनी के CSS effects हैं; 3D face reshaping नहीं। Camera और video support आपके browser पर निर्भर है।</div></div>
+</div>
+<script id="avika-ultra-script">
+(()=>{'use strict';
+const $u=id=>document.getElementById(id);let favIndex=0,camMode='photo',toastTimer=null;
+const looks=[['Natural','none'],['Soft Glow','brightness(1.12) saturate(1.18)'],['Portrait','brightness(1.08) contrast(1.06) saturate(1.2)'],['Golden Hour','sepia(.25) saturate(1.45) brightness(1.06)'],['Rose','sepia(.12) saturate(1.45) hue-rotate(325deg)'],['Cinematic','contrast(1.24) saturate(.85)'],['Vintage','sepia(.55) contrast(.95)'],['Noir','grayscale(1) contrast(1.3)'],['Neon','saturate(2) contrast(1.2)'],['Cool Blue','hue-rotate(18deg) saturate(1.2)'],['Soft Dream','brightness(1.16) contrast(.87) saturate(1.15)'],['Sunset','sepia(.3) hue-rotate(340deg) saturate(1.6)'],['High Key','brightness(1.23) contrast(.91)'],['Moody','brightness(.83) contrast(1.25)'],['Pop','saturate(1.8) contrast(1.13)']];
+function notify(t){const el=$u('avikaCamToast');if(!el)return;el.textContent=t;el.hidden=false;clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.hidden=true,1800)}
+function call(fn){try{const r=fn();if(r&&typeof r.catch==='function')r.catch(e=>window.msg?.(e.message))}catch(e){window.msg?.(e.message)}}
+function setLook(i){favIndex=(i+looks.length)%looks.length;call(()=>window.setFilter(looks[favIndex][1]));notify('✦ '+looks[favIndex][0]);try{localStorage.setItem('avika-ultra-look',String(favIndex))}catch{}}
+function close(){ $u('avikaUltraPanel')?.classList.remove('show')}
+function show(){ $u('avikaUltraPanel')?.classList.add('show')}
+function tool(label,fn){const b=document.createElement('button');b.type='button';b.textContent=label;b.onclick=()=>{close();call(fn)};return b}
+function init(){const stage=document.querySelector('#snap .camera-stage'),tools=$u('ultraTools');if(!stage||!tools||$u('ultraLaunch'))return;
+ const launch=document.createElement('button');launch.id='ultraLaunch';launch.type='button';launch.className='ultra-launch';launch.textContent='✦ ALL TOOLS';launch.onclick=show;stage.append(launch);
+ const toast=document.createElement('div');toast.id='avikaCamToast';toast.hidden=true;stage.append(toast);
+ const actions=[
+ ['📸 Capture Photo',()=>window.timedCapture()],['🎬 Start / Stop Video',()=>window.avikaToggleRecording()],
+ ['🔄 Flip Camera',()=>window.flipCamera()],['✨ Next Beauty Look',()=>setLook(favIndex+1)],
+ ['◀ Previous Look',()=>setLook(favIndex-1)],['🎲 Surprise Filter',()=>setLook(Math.floor(Math.random()*looks.length))],
+ ['⏱ Photo Timer',()=>window.setCaptureDelay?.()],['▦ Rule of Thirds',()=>window.toggleGrid?.()],
+ ['🪞 Mirror Selfie',()=>window.toggleMirror?.()],['⚡ Flash Effect',()=>window.toggleAvikaFlash?.()],
+ ['🔍 Zoom',()=>window.cycleZoom?.()],['🦋 Face Lens',()=>window.toggleFaceAR?.()],
+ ['👑 Crown Sticker',()=>window.setSticker?.('👑')],['❤️ Heart Sticker',()=>window.setSticker?.('❤️')],
+ ['✨ Star Sticker',()=>window.setSticker?.('✨')],['🧼 Clear Sticker',()=>window.setSticker?.('')],
+ ['🖼 Photo Editor',()=>{const b=[...stage.querySelectorAll('button')].find(x=>x.textContent.includes('Edit'));if(b)b.click();else window.msg?.('Editor not available')}],
+ ['💾 Photo Preview',()=>{const p=$u('preview');if(p)p.scrollIntoView({behavior:'smooth'});else window.msg?.('पहले Photo लें')}]
+ ];actions.forEach(([l,f])=>tools.append(tool(l,f)));
+ $u('ultraClose').onclick=close;$u('avikaUltraPanel').addEventListener('click',e=>{if(e.target===$u('avikaUltraPanel'))close()});
+ try{const v=Number(localStorage.getItem('avika-ultra-look'));if(Number.isInteger(v)&&v>=0&&v<looks.length)favIndex=v}catch{}
+ const chat=$u('chatMessage');if(chat){const hint=document.createElement('div');hint.className='ultra-chat-help';hint.textContent='↵ Enter = Send • Shift+Enter = New line • Draft saved on this device';chat.insertAdjacentElement('afterend',hint);
+ let lastChat='';chat.addEventListener('input',()=>{if(!window.currentUser||!window.chatUser)return;const key='avika-draft-'+window.currentUser.id+'-'+window.chatUser.id;try{localStorage.setItem(key,chat.value)}catch{}});
+ chat.addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey&&!e.isComposing){e.preventDefault();const text=chat.value.trim();if(text){call(async()=>{await window.sendMessage();if(!chat.value.trim()&&window.currentUser&&window.chatUser){try{localStorage.removeItem('avika-draft-'+window.currentUser.id+'-'+window.chatUser.id)}catch{}}})}}});
+ const obs=new MutationObserver(()=>{if(!window.currentUser||!window.chatUser||!$u('chatWindow')||$u('chatWindow').classList.contains('hidden'))return;const key=window.currentUser.id+'-'+window.chatUser.id;if(key!==lastChat){lastChat=key;try{chat.value=localStorage.getItem('avika-draft-'+key)||''}catch{}}});obs.observe($u('chatWindow'),{attributes:true,attributeFilter:['class']});
+ }
+ const post=$u('postCaption');if(post){try{post.value=localStorage.getItem('avika-post-draft')||post.value}catch{}post.addEventListener('input',()=>{try{localStorage.setItem('avika-post-draft',post.value)}catch{}})}
+ document.addEventListener('keydown',e=>{if(e.key==='Escape')close();const tag=document.activeElement?.tagName;if(tag==='INPUT'||tag==='TEXTAREA'||tag==='SELECT'||$u('avikaUltraPanel')?.classList.contains('show'))return;if(!document.querySelector('#snap.page.active'))return;if(e.key==='ArrowRight')setLook(favIndex+1);if(e.key==='ArrowLeft')setLook(favIndex-1);if(e.code==='Space'){e.preventDefault();call(()=>window.timedCapture())}});
+ }
+ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
+})();
+</script>
 </body>
 </html>
