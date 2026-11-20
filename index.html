@@ -637,7 +637,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
 </style>
 <script id="avika-fullscreen-camera-script">
 (function(){
- const looks=[['Natural','none'],['Glow','brightness(1.13) saturate(1.23)'],['Rose','sepia(.16) saturate(1.5) hue-rotate(320deg)'],['Golden','sepia(.3) saturate(1.4)'],['Dream','brightness(1.13) contrast(.9) saturate(1.4)'],['Neon','contrast(1.22) saturate(2)'],['Cinema','contrast(1.3) saturate(.75)'],['B&W','grayscale(1)'],['Vintage','sepia(.65)']];
+ const looks=[["Natural","none"],["Soft Skin","brightness(1.09) contrast(.92) saturate(1.07)"],["Dewy","brightness(1.12) contrast(.94) saturate(1.24)"],["Glass Glow","brightness(1.15) contrast(.89) saturate(1.28)"],["Peach","sepia(.12) saturate(1.26) hue-rotate(345deg) brightness(1.07)"],["Blush","sepia(.16) saturate(1.38) hue-rotate(325deg) brightness(1.05)"],["Rose Milk","sepia(.18) saturate(1.32) hue-rotate(315deg) contrast(.94)"],["Golden Skin","sepia(.24) saturate(1.18) brightness(1.08)"],["Soft Focus","contrast(.86) brightness(1.12) saturate(1.1)"],["Clean","contrast(1.06) brightness(1.04) saturate(.96)"],["Cinema","contrast(1.28) saturate(.82)"],["Teal Orange","contrast(1.2) saturate(1.38) hue-rotate(10deg)"],["Film Warm","sepia(.32) contrast(1.12) saturate(.9)"],["Film Cool","hue-rotate(190deg) saturate(.82) contrast(1.08)"],["Noir","grayscale(1) contrast(1.35)"],["Vintage","sepia(.55) contrast(.92)"],["Polaroid","sepia(.24) contrast(.86) saturate(1.18)"],["Matte","contrast(.8) saturate(.8) brightness(1.1)"],["Drama","contrast(1.45) saturate(.62)"],["Retro Fade","sepia(.25) contrast(.72) brightness(1.13)"],["Vivid","saturate(1.85) contrast(1.08)"],["Candy","saturate(1.65) brightness(1.12) hue-rotate(330deg)"],["Pink Pop","sepia(.18) saturate(1.85) hue-rotate(310deg)"],["Purple Haze","hue-rotate(245deg) saturate(1.38)"],["Blue Dream","hue-rotate(175deg) saturate(1.38)"],["Mint","hue-rotate(75deg) saturate(1.25)"],["Sunset","sepia(.45) saturate(1.5) hue-rotate(340deg)"],["Golden Hour","sepia(.38) saturate(1.45) brightness(1.06)"],["Neon","contrast(1.4) saturate(2.4)"],["Electric","hue-rotate(125deg) contrast(1.25) saturate(1.9)"],["Moonlight","brightness(.85) hue-rotate(190deg) saturate(.8)"],["Dreamy","brightness(1.16) contrast(.78) saturate(1.35)"],["Moody","brightness(.86) contrast(1.3) saturate(.83)"],["Cozy","sepia(.3) brightness(1.07) contrast(.88)"],["Cloud","brightness(1.2) contrast(.78) saturate(.75)"],["Night City","contrast(1.32) saturate(1.55) hue-rotate(225deg)"],["Autumn","sepia(.48) saturate(1.3) hue-rotate(350deg)"],["Winter","hue-rotate(170deg) saturate(.68) brightness(1.1)"],["Summer","sepia(.2) saturate(1.6) brightness(1.08)"],["Spring","saturate(1.38) brightness(1.13)"],["Mono","grayscale(1)"],["Silver","grayscale(1) contrast(.85) brightness(1.12)"],["High Key","grayscale(.75) brightness(1.28) contrast(.8)"],["Dark Mono","grayscale(1) contrast(1.6) brightness(.86)"],["Sepia","sepia(1)"],["Amber","sepia(.7) saturate(1.3)"],["Faded","contrast(.65) saturate(.75) brightness(1.16)"],["Sharp","contrast(1.25) saturate(1.08)"],["Pastel","saturate(.7) brightness(1.17) contrast(.83)"],["Bold","contrast(1.5) saturate(1.3)"],["Disco","hue-rotate(285deg) saturate(2.1)"],["Festival","sepia(.15) saturate(2.25) contrast(1.14)"],["Pop Art","contrast(1.55) saturate(2.3)"],["Magenta","hue-rotate(285deg) saturate(1.65)"],["Aqua","hue-rotate(155deg) saturate(1.7)"],["Lime","hue-rotate(55deg) saturate(1.7)"],["Firelight","sepia(.58) saturate(1.65) contrast(1.14)"],["Ice Blue","hue-rotate(185deg) saturate(1.25) brightness(1.13)"],["Royal","hue-rotate(255deg) saturate(1.55) contrast(1.08)"],["Party Glow","brightness(1.2) saturate(2) contrast(1.1)"]];
  let drawerOpen=false,mode='photo';
  function makeButton(label,fn,cls='',title=''){const b=document.createElement('button');b.type='button';b.className='avika-cam-btn '+cls;b.textContent=label;b.title=title||label;b.addEventListener('click',fn);return b}
  function safe(fn){try{const v=fn();if(v&&typeof v.catch==='function')v.catch(e=>window.msg?.(e.message))}catch(e){window.msg?.(e.message)}}
@@ -743,6 +743,107 @@ function init(){const stage=document.querySelector('#snap .camera-stage'),tools=
  document.addEventListener('keydown',e=>{if(e.key==='Escape')close();const tag=document.activeElement?.tagName;if(tag==='INPUT'||tag==='TEXTAREA'||tag==='SELECT'||$u('avikaUltraPanel')?.classList.contains('show'))return;if(!document.querySelector('#snap.page.active'))return;if(e.key==='ArrowRight')setLook(favIndex+1);if(e.key==='ArrowLeft')setLook(favIndex-1);if(e.code==='Space'){e.preventDefault();call(()=>window.timedCapture())}});
  }
  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
+})();
+</script>
+<style id="avika-ar-styles">
+#snap .camera-stage .ar-lens-canvas{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:8}
+#snap .ar-lens-bar{position:absolute;bottom:112px;left:8px;right:8px;z-index:26;display:flex;gap:8px;overflow-x:auto;padding:8px 4px;scrollbar-width:none;overscroll-behavior-x:contain}
+#snap .ar-lens-bar::-webkit-scrollbar{display:none}
+#snap .ar-lens-chip{white-space:nowrap;flex:0 0 auto;border:1px solid #ffffff66;border-radius:99px;background:#080810b8;color:white;padding:9px 12px;font-size:12px;backdrop-filter:blur(10px)}
+#snap .ar-lens-chip.selected{background:linear-gradient(120deg,#a855f7,#e83e91);border-color:white}
+#snap .ar-lens-hint{position:absolute;top:65px;left:50%;transform:translateX(-50%);z-index:25;color:#fff;background:#0009;border-radius:30px;padding:7px 12px;font-size:11px;white-space:nowrap;pointer-events:none}
+</style>
+<script id="avika-ar-lenses">
+(()=>{'use strict';
+const LENSES=[['Off','✕'],['Royal Crown','👑'],['Butterfly','🦋'],['Puppy','🐶'],['Kitty','🐱'],['Bunny','🐰'],['Heart Rain','💖'],['Star Glow','✨'],['Angel','😇'],['Devil','😈'],['Cyber Visor','🕶️'],['Neon Mask','🌈'],['Blush','🌸'],['Party','🎉'],['Galaxy','🌌'],['Ice Queen','❄️'],['Fire','🔥'],['Fairy','🧚'],['Golden','💛'],['Comic','💥']];
+let selected=0, mesh=null, loop=null,busy=false,latest=null,initPromise=null, canvas=null,bar=null;
+const el=id=>document.getElementById(id);
+function notify(t){if(typeof msg==='function')msg(t)}
+function point(points,i,w,h){const p=points[i];return {x:p.x*w,y:p.y*h,z:p.z||0}}
+function drawFace(ctx,pts,w,h,kind,time){
+ const eyeL=point(pts,33,w,h),eyeR=point(pts,263,w,h),nose=point(pts,1,w,h),chin=point(pts,152,w,h),fore=point(pts,10,w,h),mouth=point(pts,13,w,h);
+ const span=Math.hypot(eyeR.x-eyeL.x,eyeR.y-eyeL.y),angle=Math.atan2(eyeR.y-eyeL.y,eyeR.x-eyeL.x),cx=(eyeL.x+eyeR.x)/2,cy=(eyeL.y+eyeR.y)/2;
+ const glyph=(t,x,y,size,rot=0)=>{ctx.save();ctx.translate(x,y);ctx.rotate(rot);ctx.font=`${Math.max(14,size)}px Apple Color Emoji,Segoe UI Emoji,sans-serif`;ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(t,0,0);ctx.restore()};
+ const stroke=(color,width)=>{ctx.strokeStyle=color;ctx.lineWidth=width;ctx.lineCap='round';ctx.lineJoin='round'};
+ ctx.save();ctx.shadowColor='#0008';ctx.shadowBlur=span*.06;
+ if([1,15,18].includes(kind))glyph(kind===15?'❄️':kind===18?'💛':'👑',fore.x,fore.y-span*.45,span*.95,angle);
+ if(kind===2||kind===17){glyph('🦋',fore.x-span*.48,fore.y-span*.3,span*.54,-.25);glyph('🦋',fore.x+span*.48,fore.y-span*.3,span*.54,.25)}
+ if([3,4,5].includes(kind)){
+  glyph(kind===3?'🐶':kind===4?'🐱':'🐰',fore.x,fore.y-span*.5,span*.95,angle);
+  glyph(kind===3?'🐽':kind===4?'💗':'🥕',nose.x,nose.y+span*.05,span*.35);
+ }
+ if(kind===8||kind===9){glyph(kind===8?'😇':'😈',fore.x,fore.y-span*.53,span*.85)}
+ if(kind===10||kind===11){ctx.save();ctx.translate(cx,cy);ctx.rotate(angle);ctx.fillStyle=kind===10?'#0ef9ff88':'#f900e155';ctx.strokeStyle=kind===10?'#28f7ff':'#ff53cf';ctx.lineWidth=Math.max(2,span*.035);ctx.beginPath();ctx.roundRect(-span*.65,-span*.24,span*1.3,span*.45,span*.13);ctx.fill();ctx.stroke();ctx.restore()}
+ if(kind===12){glyph('🌸',eyeL.x-span*.33,nose.y+span*.45,span*.33);glyph('🌸',eyeR.x+span*.33,nose.y+span*.45,span*.33)}
+ if(kind===16){glyph('🔥',fore.x,fore.y-span*.6,span*.9)}
+ if(kind===19){glyph('💥',fore.x,fore.y-span*.45,span*.8);glyph('⭐',mouth.x+span*.45,mouth.y,span*.32)}
+ if([6,7,13,14].includes(kind)){const t=time/500;for(let i=0;i<7;i++){const a=i*2.4+t*.3,r=span*(.6+(i%3)*.24);glyph(kind===6?'💖':kind===7?'✨':kind===13?'🎉':'🌟',cx+Math.cos(a)*r,cy+Math.sin(a)*r,span*(.17+(i%2)*.07))}}
+ if(kind===15||kind===18){ctx.save();ctx.globalAlpha=.65;stroke(kind===15?'#8beaff':'#ffd36b',span*.025);ctx.beginPath();ctx.arc(cx,cy,span*.9,-Math.PI*.85,Math.PI*.85);ctx.stroke();ctx.restore()}
+ ctx.restore();
+}
+function draw(ctx,w,h,faces,time){if(!selected||!faces?.length)return;for(const face of faces.slice(0,2))drawFace(ctx,face,w,h,selected,time)}
+function resize(){if(!canvas)return;const rect=canvas.getBoundingClientRect(),d=Math.min(devicePixelRatio||1,2);canvas.width=Math.max(1,Math.round(rect.width*d));canvas.height=Math.max(1,Math.round(rect.height*d))}
+function paint(faces){if(!canvas)return;const ctx=canvas.getContext('2d');ctx.clearRect(0,0,canvas.width,canvas.height);if(!faces?.length||!selected)return;
+ const v=el('camera');if(!v?.videoWidth)return;const vw=v.videoWidth,vh=v.videoHeight,cw=canvas.width,ch=canvas.height;
+ const scale=Math.max(cw/vw,ch/vh),offX=(cw-vw*scale)/2,offY=(ch-vh*scale)/2;
+ ctx.save();ctx.translate(offX,offY);ctx.scale(scale,scale);
+ // Mirror the face landmarks for the selfie preview when the preview is mirrored.
+ if(getComputedStyle(v).transform.includes('matrix(-1')||getComputedStyle(v).transform.includes('scaleX(-1')){ctx.translate(vw,0);ctx.scale(-1,1)}
+ draw(ctx,vw,vh,faces,performance.now());ctx.restore();}
+async function ensureMesh(){if(mesh)return;if(initPromise)return initPromise;initPromise=(async()=>{
+ if(!window.FaceMesh){await new Promise((resolve,reject)=>{const s=document.createElement('script');s.src='https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/face_mesh.js';s.onload=resolve;s.onerror=()=>reject(Error('Face Mesh library load failed'));document.head.append(s)})}
+ mesh=new FaceMesh({locateFile:f=>'https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/'+f});mesh.setOptions({maxNumFaces:2,refineLandmarks:true,minDetectionConfidence:.55,minTrackingConfidence:.55});mesh.onResults(r=>{latest=r.multiFaceLandmarks||[];paint(latest)});
+ })();try{await initPromise}finally{initPromise=null}}
+async function run(){if(busy||!selected||!document.querySelector('#snap.page.active'))return;const v=el('camera');if(!v||!v.videoWidth||!v.srcObject)return;busy=true;try{await mesh.send({image:v})}catch(e){console.warn('AR frame',e)}finally{busy=false}}
+async function select(i){selected=i;bar?.querySelectorAll('button').forEach((b,j)=>b.classList.toggle('selected',j===i));if(i===0){latest=null;canvas?.getContext('2d').clearRect(0,0,canvas.width,canvas.height);clearInterval(loop);loop=null;return}
+ try{if(typeof startCamera==='function')await startCamera();await ensureMesh();resize();if(!loop)loop=setInterval(run,125);notify('AR Lens: '+LENSES[i][0])}catch(e){selected=0;bar?.querySelectorAll('button').forEach((b,j)=>b.classList.toggle('selected',j===0));notify('Face Lens unavailable: '+e.message)}}
+function init(){const stage=document.querySelector('#snap .camera-stage');if(!stage||el('avikaARCanvas'))return;
+ canvas=document.createElement('canvas');canvas.id='avikaARCanvas';canvas.className='ar-lens-canvas';stage.append(canvas);
+ bar=document.createElement('div');bar.className='ar-lens-bar';bar.setAttribute('aria-label','Face lens carousel');LENSES.forEach(([name,emoji],i)=>{const b=document.createElement('button');b.type='button';b.className='ar-lens-chip'+(i===0?' selected':'');b.textContent=emoji+' '+name;b.onclick=()=>select(i);bar.append(b)});stage.append(bar);
+ const hint=document.createElement('div');hint.className='ar-lens-hint';hint.textContent='✨ Swipe to choose a face lens';stage.append(hint);setTimeout(()=>hint.remove(),5500);
+ window.addEventListener('resize',resize);resize();
+ // When a photo is captured, render the same lens into the saved photo as well.
+ if(typeof captureSnap==='function'){
+ const original=captureSnap;
+ captureSnap=async function(...args){await original(...args);if(!selected||!latest?.length||!pendingSnap)return;
+ try{const originalFile=pendingSnap,bitmap=await createImageBitmap(originalFile),c=document.createElement('canvas');c.width=bitmap.width;c.height=bitmap.height;const ctx=c.getContext('2d');ctx.drawImage(bitmap,0,0);bitmap.close?.();
+ // Original captureSnap mirrors front-facing photos; mirror the landmark geometry to match.
+ if(cameraFacing==='user'){ctx.translate(c.width,0);ctx.scale(-1,1)}
+ draw(ctx,c.width,c.height,latest,performance.now());const blob=await new Promise(r=>c.toBlob(r,'image/jpeg',.92));if(!blob)return;
+ pendingSnap=new File([blob],'avika-ar-lens.jpg',{type:'image/jpeg'});const preview=el('preview');if(preview){const img=preview.querySelector('img');if(img)img.src=URL.createObjectURL(blob)}
+ }catch(e){console.warn('Lens photo compositing unavailable',e)}
+ };
+ }
+}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
+})();
+</script>
+
+<style id="avika-filter-collection-css">
+#snap .avika-filter-categories{position:absolute;z-index:27;bottom:169px;left:8px;right:8px;display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;padding:5px}
+#snap .avika-filter-categories button{flex:0 0 auto;border:1px solid #fff6;border-radius:18px;background:#090914c9;color:white;padding:7px 11px;font-size:11px;font-weight:700;backdrop-filter:blur(10px)}
+#snap .avika-filter-categories button.selected{background:#dd4c9a;border-color:white}
+#snap .avika-current-look{position:absolute;z-index:27;bottom:207px;left:50%;transform:translateX(-50%);background:#0009;color:#fff;border-radius:15px;padding:5px 12px;font-size:11px;white-space:nowrap;pointer-events:none}
+#snap .avika-filter-dock{bottom:7px;max-width:100%}
+#snap .ar-lens-bar{bottom:113px}
+#snap .avika-filter-categories{bottom:166px}
+#snap .avika-current-look{bottom:202px}
+</style>
+<script id="avika-filter-collection-js">
+(()=>{'use strict';
+const groups={
+'✨ Beauty':['Natural','Soft Skin','Dewy','Glass Glow','Peach','Blush','Rose Milk','Golden Skin','Soft Focus','Clean'],
+'🎬 Cinema':['Cinema','Teal Orange','Film Warm','Film Cool','Noir','Vintage','Polaroid','Matte','Drama','Retro Fade'],
+'🌈 Color':['Vivid','Candy','Pink Pop','Purple Haze','Blue Dream','Mint','Sunset','Golden Hour','Neon','Electric'],
+'🌙 Mood':['Moonlight','Dreamy','Moody','Cozy','Cloud','Night City','Autumn','Winter','Summer','Spring'],
+'🖤 Classic':['Mono','Silver','High Key','Dark Mono','Sepia','Amber','Faded','Sharp','Pastel','Bold'],
+'🎉 Party':['Disco','Festival','Pop Art','Magenta','Aqua','Lime','Firelight','Ice Blue','Royal','Party Glow']};
+function init(){const stage=document.querySelector('#snap .camera-stage'),dock=stage?.querySelector('.avika-filter-dock');if(!stage||!dock||document.getElementById('avikaFilterCategories'))return;
+const buttons=[...dock.querySelectorAll('button')];const cats=document.createElement('div');cats.id='avikaFilterCategories';cats.className='avika-filter-categories';const current=document.createElement('div');current.className='avika-current-look';current.textContent='✨ 60 Looks • Swipe filters';stage.append(cats,current);
+const all=[...buttons];let active='All';function filter(name){active=name;cats.querySelectorAll('button').forEach(b=>b.classList.toggle('selected',b.dataset.cat===name));buttons.forEach(b=>{b.style.display=name==='All'||(groups[name]||[]).includes(b.textContent.trim())?'':'none'});dock.scrollLeft=0}
+for(const name of ['All',...Object.keys(groups)]){const b=document.createElement('button');b.type='button';b.textContent=name;b.dataset.cat=name;b.onclick=()=>filter(name);cats.append(b)}
+buttons.forEach(b=>b.addEventListener('click',()=>{current.textContent='✨ '+b.textContent.trim();setTimeout(()=>{if(current.textContent==='✨ '+b.textContent.trim())current.textContent='✨ 60 Looks • Swipe filters'},2200)}));filter('All');
+}if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>setTimeout(init,300));else setTimeout(init,300);
 })();
 </script>
 </body>
