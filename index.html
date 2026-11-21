@@ -325,7 +325,7 @@ body{font-family:"DM Sans",system-ui,sans-serif;letter-spacing:-.012em}
 <button class="lens-chip" onclick="selectAvikaLens('butterfly',this)"><strong>🦋</strong>Butterfly</button>
 <button class="lens-chip" onclick="selectAvikaLens('flower',this)"><strong>🌸</strong>Bloom</button>
 </div>
-<div class="studio-controls"><label for="avikaZoom">Zoom <span id="avikaZoomValue">1.0×</span></label><input id="avikaZoom" type="range" min="1" max="3" step="0.1" value="1" oninput="setAvikaZoom(this.value)"><button class="soft-btn" onclick="toggleAvikaFlash()" id="avikaFlashBtn">⚡ Flash OFF</button></div>
+<div class="studio-controls"><label for="avikaZoom">Zoom <span id="avikaZoomValue">1.0×</span></label><input id="avikaZoom" type="range" min="1" max="100" step="0.1" value="1" oninput="setAvikaZoom(this.value)"><button class="soft-btn" onclick="toggleAvikaFlash()" id="avikaFlashBtn">⚡ Flash OFF</button></div>
 <div class="camera-effects" id="premiumFilters"><button onclick="premiumFilter('none',this)" class="selected">Natural</button><button onclick="premiumFilter('brightness(1.13) contrast(1.05) saturate(1.25)',this)">✨ Beauty Glow</button><button onclick="premiumFilter('contrast(1.15) saturate(1.55)',this)">🌈 Pop</button><button onclick="premiumFilter('sepia(.25) saturate(1.3) contrast(1.08)',this)">🌅 Golden</button><button onclick="premiumFilter('hue-rotate(190deg) saturate(1.4)',this)">💜 Neon</button><button onclick="premiumFilter('contrast(1.35) grayscale(1)',this)">🎞 Mono</button><button onclick="premiumFilter('brightness(1.12) sepia(.2) hue-rotate(-20deg)',this)">🌸 Rose</button><button onclick="premiumFilter('brightness(.9) contrast(1.25) saturate(.75)',this)">🎬 Cinema</button></div><div class="row" style="gap:8px;flex-wrap:wrap"><button class="soft-btn" onclick="toggleGrid()">▦ Grid</button><button class="soft-btn" onclick="cycleTimer()" id="timerBtn">⏱ Timer: Off</button><button class="soft-btn" onclick="toggleMirror()" id="mirrorBtn">⇄ Mirror</button><button class="soft-btn" onclick="saveSnapToDevice()">⬇ Save Photo</button></div><p class="small">Live filters</p><div class="post-actions"><button class="action" onclick="setFilter('none')">Normal</button><button class="action" onclick="setFilter('brightness(1.12) saturate(1.3)')">Glow</button><button class="action" onclick="setFilter('sepia(.55)')">Vintage</button><button class="action" onclick="setFilter('grayscale(1)')">B&W</button><button class="action" onclick="setFilter('saturate(1.8)')">Vivid</button><button class="action" onclick="setFilter('hue-rotate(45deg)')">Dream</button></div><button class="soft-btn full" onclick="toggleFaceAR()">✨ Face-tracking lens (supported browsers)</button><p class="small">Stickers</p><div class="post-actions"><button class="action" onclick="setSticker('❤️')">❤️</button><button class="action" onclick="setSticker('🐶')">🐶</button><button class="action" onclick="setSticker('👑')">👑</button><button class="action" onclick="setSticker('😎')">😎</button><button class="action" onclick="setSticker('✨')">✨</button><button class="action" onclick="setSticker('')">Clear</button></div><input id="snapText" class="field" placeholder="Add text to your snap"><div id="preview"></div><p class="small">Camera access needs HTTPS and your permission. Face stickers use available face detection; advanced 3D AR lenses are not included.</p></div></section>
 
    <section class="page" id="chat"><div class="card"><h2>Messages</h2><input id="chatSearch" class="field" placeholder="Find someone by username"><button class="soft-btn full" onclick="findChatUser()">Search people</button><div id="chatSearchResults"></div><div class="recent-heading"><h3>Recent chats</h3><button class="soft-btn" onclick="loadRecentChats()">↻</button></div><div id="recentChats" class="recent-chats"><div class="small">Loading conversations…</div></div><div id="chatWindow" class="hidden"><div class="row between"><h3 id="chatWith"></h3><button class="soft-btn" onclick="chatUser=null;document.getElementById('chatWindow').classList.add('hidden')">Close</button></div><div class="chat-tools"><button class="soft-btn" onclick="startCall(false)">📞 Voice call</button><button class="soft-btn" onclick="startCall(true)">📹 Video call</button><button class="soft-btn" onclick="chooseChatMedia()">📎 Photo / Video</button></div><input type="file" id="chatMedia" accept="image/*,video/*" hidden onchange="sendChatMedia(this)"><div class="chat-status" id="chatStatus">Messages sync while both users are online.</div><div id="messages" class="messages"></div><div id="typingStatus" class="chat-typing"></div><textarea id="chatMessage" class="field" placeholder="Write a message…" oninput="sendTypingSignal()"></textarea><button class="primary full" onclick="sendMessage()">Send message</button><button class="soft-btn full" onclick="refreshMessages()">Refresh messages</button></div></div></section>
@@ -547,7 +547,7 @@ stopCamera=function(){faceEnabled=false;clearInterval(faceTimer);clearInterval(m
 let avikaLens='none',avikaZoom=1,avikaFlash=false;
 const avikaLensEmoji={none:'',crown:'👑',hearts:'💗',glasses:'😎',puppy:'🐶',sparkle:'🌟',butterfly:'🦋',flower:'🌸'};
 function selectAvikaLens(lens,button){avikaLens=lens;document.querySelectorAll('#avikaLensStrip button').forEach(b=>b.classList.toggle('active',b===button));setSticker(avikaLensEmoji[lens]||'');if(lens!=='none'&&!faceEnabled){msg('Lens selected. Face-tracking के लिए Face-tracking lens भी ON करें।')}}
-function setAvikaZoom(value){avikaZoom=Math.max(1,Math.min(3,Number(value)||1));const v=$('camera');if(v)v.style.scale=String(avikaZoom);const label=$('avikaZoomValue');if(label)label.textContent=avikaZoom.toFixed(1)+'×'}
+function setAvikaZoom(value){avikaZoom=Math.max(1,Math.min(100,Number(value)||1));const v=$('camera');if(v){v.style.transform='scale('+avikaZoom+')';v.style.transformOrigin='center center'};const label=$('avikaZoomValue');if(label)label.textContent=avikaZoom.toFixed(1)+'×'}
 function toggleAvikaFlash(){avikaFlash=!avikaFlash;$('avikaFlashBtn').textContent=avikaFlash?'⚡ Flash ON':'⚡ Flash OFF'}
 // Preserve existing capture logic while making digital zoom visible in the saved image.
 const avikaBeforeStudioCapture=captureSnap;
@@ -726,7 +726,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
   const top=document.createElement('div');top.id='avikaFloatTop';top.className='avika-float-top';
   top.append(makeButton('⚙️',()=>toggleDrawer(),'','All camera tools'),makeButton('AVIKA ✦',()=>{},'','Camera Studio'),makeButton('🔄',()=>safe(()=>flipCamera()),'','Flip camera'));
   const right=document.createElement('div');right.className='avika-float-right';
-  right.append(makeButton('✨',()=>toggleDrawer(),'','Beauty and lenses'),makeButton('⚡',()=>safe(()=>toggleAvikaFlash()),'','Flash'),makeButton('▦',()=>safe(()=>toggleGrid()),'','Grid'),makeButton('1×',e=>{const levels=[1,1.5,2,3];let n=Number(e.currentTarget.dataset.step||0);n=(n+1)%levels.length;e.currentTarget.dataset.step=n;e.currentTarget.textContent=levels[n]+'×';safe(()=>setAvikaZoom(levels[n]))},'','Zoom'),makeButton('👑',()=>safe(()=>setSticker('👑')),'','Royal sticker'));
+  right.append(makeButton('✨',()=>toggleDrawer(),'','Beauty and lenses'),makeButton('⚡',()=>safe(()=>toggleAvikaFlash()),'','Flash'),makeButton('▦',()=>safe(()=>toggleGrid()),'','Grid'),makeButton('1×',e=>{const levels=[1,2,5,10,20,50,100];let n=Number(e.currentTarget.dataset.step||0);n=(n+1)%levels.length;e.currentTarget.dataset.step=n;e.currentTarget.textContent=levels[n]+'×';safe(()=>setAvikaZoom(levels[n]))},'','Zoom'),makeButton('👑',()=>safe(()=>setSticker('👑')),'','Royal sticker'));
   const bottom=document.createElement('div');bottom.className='avika-float-bottom';
   const photo=makeButton('◉',()=>safe(()=>timedCapture()),'avika-capture','Take photo');
   const video=makeButton('●',()=>{safe(()=>avikaToggleRecording());video.classList.toggle('active')},'avika-record','Record / stop video');
@@ -1004,6 +1004,46 @@ function decorate(){
 }
 function init(){const feed=document.getElementById('feed');if(!feed)return;const observer=new MutationObserver(()=>{observer.disconnect();decorate();observer.observe(feed,{childList:true,subtree:true})});observer.observe(feed,{childList:true,subtree:true});decorate()}
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
+})();
+</script>
+
+<!-- AVIKA 100x DIGITAL ZOOM: camera-only overlay, pinch gestures and preset controls -->
+<style>
+#snap .avika-zoom-panel{position:absolute;z-index:45;left:12px;right:12px;bottom:172px;padding:12px;border-radius:18px;background:rgba(9,9,17,.78);backdrop-filter:blur(16px);color:white;box-shadow:0 8px 35px #0008}
+#snap .avika-zoom-panel .zoom-head{display:flex;justify-content:space-between;align-items:center;font-weight:800;margin-bottom:8px}
+#snap .avika-zoom-panel input{width:100%;accent-color:#ff3c91;touch-action:pan-x}
+#snap .avika-zoom-presets{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;margin-top:9px}
+#snap .avika-zoom-presets button{flex:0 0 auto;border:1px solid #ffffff55;background:#ffffff16;color:#fff;border-radius:999px;padding:8px 11px;font-weight:750}
+#snap .avika-zoom-presets button.active{background:#ff3c91;border-color:#ff3c91}
+#snap .avika-zoom-hint{font-size:10px;opacity:.75;margin-top:7px}
+#snap .avika-zoom-toggle{position:absolute;z-index:46;right:12px;top:51%;border:1px solid #fff7;border-radius:999px;padding:9px 12px;background:#10101bcc;color:#fff;font-weight:800}
+#snap .avika-zoom-panel[hidden]{display:none!important}
+@media(max-height:650px){#snap .avika-zoom-panel{bottom:125px}}
+</style>
+<script id="avika-100x-zoom">
+(()=>{
+ const $=id=>document.getElementById(id);
+ let z=1, initialDistance=0, initialZoom=1;
+ const clamp=v=>Math.min(100,Math.max(1,Number(v)||1));
+ function setZoom(value){z=clamp(value);if(typeof window.setAvikaZoom==='function')window.setAvikaZoom(z);const slider=$('avika100Slider'),label=$('avika100Value'),toggle=$('avika100Toggle');if(slider)slider.value=z;if(label)label.textContent=z.toFixed(z<10?1:0)+'×';if(toggle)toggle.textContent='🔍 '+z.toFixed(z<10?1:0)+'×';document.querySelectorAll('#avika100Presets button').forEach(b=>b.classList.toggle('active',Number(b.dataset.zoom)===z));}
+ function init(){const stage=document.querySelector('#snap .camera-stage');if(!stage||$('avika100Toggle'))return;
+ const toggle=document.createElement('button');toggle.type='button';toggle.id='avika100Toggle';toggle.className='avika-zoom-toggle';toggle.textContent='🔍 1×';toggle.setAttribute('aria-label','Show zoom controls');
+ const panel=document.createElement('div');panel.id='avika100Panel';panel.className='avika-zoom-panel';panel.hidden=true;
+ panel.innerHTML='<div class="zoom-head"><span>🔍 Digital Zoom</span><span id="avika100Value">1.0×</span></div><input id="avika100Slider" aria-label="Zoom level" type="range" min="1" max="100" step="0.1" value="1"><div id="avika100Presets" class="avika-zoom-presets"></div><div class="avika-zoom-hint">100× is digital crop; image quality decreases sharply. Pinch with two fingers to zoom.</div>';
+ stage.append(toggle,panel);
+ toggle.onclick=()=>{panel.hidden=!panel.hidden};
+ $('avika100Slider').addEventListener('input',e=>setZoom(e.target.value));
+ const presets=$('avika100Presets');[1,2,5,10,20,50,100].forEach(level=>{const b=document.createElement('button');b.type='button';b.textContent=level+'×';b.dataset.zoom=level;b.onclick=()=>setZoom(level);presets.append(b)});
+ const distance=touches=>Math.hypot(touches[0].clientX-touches[1].clientX,touches[0].clientY-touches[1].clientY);
+ stage.addEventListener('touchstart',e=>{if(e.touches.length===2){initialDistance=distance(e.touches);initialZoom=z}},{passive:true});
+ stage.addEventListener('touchmove',e=>{if(e.touches.length===2&&initialDistance>0){if(e.cancelable)e.preventDefault();setZoom(initialZoom*distance(e.touches)/initialDistance)}},{passive:false});
+ stage.addEventListener('touchend',e=>{if(e.touches.length<2)initialDistance=0},{passive:true});
+ // Keep the original in-camera zoom shortcuts and legacy slider synchronized.
+ const legacy=$('avikaZoom');if(legacy)legacy.max='100';
+ const original=window.setAvikaZoom;if(typeof original==='function'){window.setAvikaZoom=function(v){original(v);z=clamp(v);const label=$('avika100Value');if(label)label.textContent=z.toFixed(z<10?1:0)+'×';const slider=$('avika100Slider');if(slider)slider.value=z;const toggle=$('avika100Toggle');if(toggle)toggle.textContent='🔍 '+z.toFixed(z<10?1:0)+'×';document.querySelectorAll('#avika100Presets button').forEach(b=>b.classList.toggle('active',Number(b.dataset.zoom)===z))}}
+ setZoom(1);
+ }
+ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
 })();
 </script>
 </body>
