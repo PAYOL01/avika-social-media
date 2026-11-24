@@ -640,7 +640,7 @@ async function setPrivateAccount(value){if(!currentUser)return;const {error}=awa
 const beforeLoadProfilePremium=loadProfile;
 loadProfile=async function(){await beforeLoadProfilePremium();if($('privateAccount'))$('privateAccount').checked=!!myProfile?.is_private;await loadFollowRequests()};
 async function loadFollowRequests(){if(!currentUser||!$('followRequests'))return;const box=$('followRequests');try{const {data,error}=await db.from('follow_requests').select('id,requester_id,created_at').eq('target_id',currentUser.id).eq('status','pending').order('created_at',{ascending:false});if(error)throw error;const users=await getProfiles((data||[]).map(x=>x.requester_id));box.replaceChildren();if(!data?.length){box.textContent='No pending requests';return}for(const r of data){const u=users.find(x=>x.id===r.requester_id);const row=document.createElement('div');row.className='request-row';const name=document.createElement('span');name.textContent='@'+(u?.username||'user');const yes=document.createElement('button');yes.className='primary';yes.textContent='Accept';yes.onclick=()=>respondFollowRequest(r,true);const no=document.createElement('button');no.className='soft-btn';no.textContent='Decline';no.onclick=()=>respondFollowRequest(r,false);row.append(name,yes,no);box.append(row)}}catch(e){box.textContent='Requests unavailable: '+e.message}}
-async function respondFollowRequest(r,accept){try{if(accept){const {error:e}=await db.from('follows').insert({follower_id:r.requester_id,following_id:currentUser.id});if(e&&e.code!=='23505')throw e}const {error}=await db.from('follow_requests').update({status:accept?'accepted':'declined'}).eq('id',r.id).eq('target_id',currentUser.id);if(error)throw error;msg(accept?'Follow request accepted':'Request declined');await loadFollowRequests();await loadProfile()}catch(e){msg('Request: '+e.message)}}
+async function respondFollowRequest(r,accept){try{const {error}=await db.rpc('avika_respond_follow',{request_id:r.id,accept_request:accept});if(error)throw error;msg(accept?'Follow request accepted':'Request declined');await loadFollowRequests();await loadProfile()}catch(e){msg('Request: '+e.message)}}
 async function toggleFollow(userId,btn){try{const {data:target,error:targetError}=await db.from('profiles').select('is_private').eq('id',userId).single();if(targetError)throw targetError;if(!target.is_private)return await oldToggleFollow(userId,btn);const {data:following,error:fe}=await db.from('follows').select('id').eq('follower_id',currentUser.id).eq('following_id',userId).maybeSingle();if(fe)throw fe;if(following)return await oldToggleFollow(userId,btn);const {data:existing,error:re}=await db.from('follow_requests').select('id,status').eq('requester_id',currentUser.id).eq('target_id',userId).maybeSingle();if(re)throw re;if(existing?.status==='pending'){const {error}=await db.from('follow_requests').delete().eq('id',existing.id);if(error)throw error;if(btn)btn.textContent='Follow';return msg('Request cancelled')}if(existing){const {error}=await db.from('follow_requests').update({status:'pending'}).eq('id',existing.id);if(error)throw error}else{const {error}=await db.from('follow_requests').insert({requester_id:currentUser.id,target_id:userId});if(error)throw error}if(btn)btn.textContent='Requested';await notify(userId,'follow_request',null);msg('Follow request sent')}catch(e){msg('Follow: '+e.message)}}
 async function showStoryViewers(storyId){const box=$('storyViewers');if(!box)return;try{const {data,error}=await db.from('story_views').select('viewer_id').eq('story_id',storyId);if(error)throw error;const users=await getProfiles((data||[]).map(v=>v.viewer_id));box.textContent='👁 '+(data?.length||0)+' views'+(users.length?' · '+users.map(u=>'@'+u.username).join(', '):'')}catch(e){box.textContent='Viewers unavailable: '+e.message}}
 async function blockCurrentChatUser(){if(!chatUser)return;const id=chatUser.id;if(!confirm('Block @'+chatUser.username+'?'))return;const {error}=await db.from('user_blocks').insert({blocker_id:currentUser.id,blocked_id:id});if(error)return msg('Block: '+error.message);chatUser=null;$('chatWindow').classList.add('hidden');msg('User blocked');loadRecentChats()}
@@ -1094,5 +1094,34 @@ function game(){const x=content();x.innerHTML='<h3>Tic Tac Toe • two players o
 function editor(){const x=content();x.innerHTML='<h3>Photo editor</h3><input id="superPhoto" type="file" accept="image/*" class="field"><canvas id="superCanvas" style="width:100%;max-height:60vh;object-fit:contain"></canvas><select id="superFilter" class="field"><option value="none">Original</option><option value="grayscale(1)">Mono</option><option value="sepia(.8)">Vintage</option><option value="saturate(1.6)">Vivid</option><option value="brightness(1.2)">Bright</option></select>';let im=null,angle=0;const c=$('superCanvas'),ctx=c.getContext('2d');function draw(){if(!im)return;const s=Math.min(1,1600/Math.max(im.width,im.height)),w=im.width*s,h=im.height*s;c.width=angle%180?h:w;c.height=angle%180?w:h;ctx.translate(c.width/2,c.height/2);ctx.rotate(angle*Math.PI/180);ctx.filter=$('superFilter').value;ctx.drawImage(im,-w/2,-h/2,w,h)}$('superPhoto').onchange=()=>{const f=$('superPhoto').files[0];if(!f)return;const url=URL.createObjectURL(f);im=new Image();im.onload=()=>{URL.revokeObjectURL(url);draw()};im.onerror=()=>{URL.revokeObjectURL(url);msg('Cannot open image')};im.src=url};$('superFilter').onchange=draw;btn('Rotate',()=>{angle=(angle+90)%360;draw()},x);btn('Save photo',()=>{if(!im)return;const a=document.createElement('a');a.download='avika-photo.jpg';a.href=c.toDataURL('image/jpeg',.92);a.click()},x)}
 })();
 </script>
+
+<script>
+(()=>{
+const prefix=SUPABASE_URL+'/storage/v1/object/public/avika-media/';
+const signedPrefix=SUPABASE_URL+'/storage/v1/object/sign/avika-media/';
+const pending=new WeakMap();
+async function resolve(el){
+ const raw=el.getAttribute('src')||'';
+ if(!raw.startsWith(prefix))return;
+ let path;
+ try{path=decodeURIComponent(raw.slice(prefix.length));}catch{return;}
+ const job={raw,user:currentUser?.id};pending.set(el,job);
+ el.removeAttribute('src');
+ el.dataset.avikaMedia=raw;
+ if(!job.user)return;
+ try{
+ const {data,error}=await db.storage.from('avika-media').createSignedUrl(path,300);
+ if(pending.get(el)!==job||currentUser?.id!==job.user||el.hasAttribute('src'))return;
+ if(error)throw error;
+ el.src=data.signedUrl;
+ }catch(e){console.warn('Media unavailable',e.message);}
+}
+function scan(root){if(root.matches?.('img[src],video[src],audio[src],source[src]'))resolve(root);root.querySelectorAll?.('img[src],video[src],audio[src],source[src]').forEach(resolve);}
+new MutationObserver(records=>{for(const r of records){if(r.type==='attributes')resolve(r.target);else r.addedNodes.forEach(scan);}}).observe(document.body,{subtree:true,childList:true,attributes:true,attributeFilter:['src']});
+scan(document.body);
+db.auth.onAuthStateChange((event)=>{if(event==='SIGNED_OUT'){document.querySelectorAll('[data-avika-media]').forEach(el=>{pending.delete(el);el.removeAttribute('src');delete el.dataset.avikaMedia;});}});
+})();
+</script>
+
 </body>
 </html>
