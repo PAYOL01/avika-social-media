@@ -982,8 +982,8 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
 </script>
 <script id="avika-signature-extras">
 (()=>{'use strict';
-const key='avika_saved_posts_v1';
-function saved(){try{return JSON.parse(localStorage.getItem(key)||'[]')}catch{return []}}
+const keyFor=()=> 'avika_saved_posts_v2_'+(currentUser?.id||'guest');
+function saved(){try{return JSON.parse(localStorage.getItem(keyFor())||'[]')}catch{return []}}
 function decorate(){
  document.querySelectorAll('#feed>.post').forEach(card=>{
   if(card.dataset.signature)return;
@@ -996,7 +996,7 @@ function decorate(){
   const actions=card.querySelector('.post-actions');
   const btn=document.createElement('button');btn.type='button';btn.className='action avika-save';btn.setAttribute('aria-label','Save post');
   function update(){const isSaved=saved().includes(id);btn.classList.toggle('saved',isSaved);btn.innerHTML=isSaved?'<i data-lucide="bookmark-check"></i>':'<i data-lucide="bookmark"></i>';if(window.lucide?.createIcons)window.lucide.createIcons()}
-  btn.addEventListener('click',()=>{let s=saved();s=s.includes(id)?s.filter(x=>x!==id):[...s,id];localStorage.setItem(key,JSON.stringify(s));update()});
+  btn.addEventListener('click',()=>{let s=saved();s=s.includes(id)?s.filter(x=>x!==id):[...s,id];localStorage.setItem(keyFor(),JSON.stringify(s));update()});
   actions.append(btn);update();
   const wrap=media.parentElement;wrap.style.position='relative';const heart=document.createElement('span');heart.className='avika-like-heart';heart.textContent='♥';wrap.append(heart);
   let last=0;media.addEventListener('click',()=>{const now=Date.now();if(now-last<340){heart.classList.remove('pulse');void heart.offsetWidth;heart.classList.add('pulse');if(!like.classList.contains('liked'))like.click()}last=now});
@@ -1044,6 +1044,34 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
  setZoom(1);
  }
  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
+})();
+</script>
+<style>
+#ultraToolsHome{display:flex;gap:8px;overflow:auto;padding:8px 14px}#ultraToolsHome button{white-space:nowrap}.ultra-count{font-size:12px;color:var(--muted)}
+:root[data-theme="light"] .topbar,:root[data-theme="light"] .bottom-nav{background:var(--nav)!important;border-color:var(--line)!important}:root[data-theme="light"] .brand{color:var(--text)!important;-webkit-text-fill-color:var(--text)!important}:root[data-theme="light"] #feed>.post{background:var(--panel)!important;border-color:var(--line)!important}:root[data-theme="light"] #feed .post-head .small{color:var(--muted)!important}
+</style>
+<script>
+(()=>{let mode='all';const bar=document.createElement('div');bar.id='ultraToolsHome';const feed=$('feed');feed.before(bar);for(const [id,label] of [['all','For you'],['following','Following'],['saved','Saved']]){const b=document.createElement('button');b.className='soft-btn';b.textContent=label;b.onclick=()=>{mode=id;loadFeed()};bar.append(b)}
+const original=loadFeed;let generation=0;loadFeed=async function(){const token=++generation;if(mode==='all')return original();if(!currentUser)return;const uid=currentUser.id;feed.textContent='Loading…';try{let q=db.from('posts').select('*').order('created_at',{ascending:false}).limit(50);if(mode==='saved'){const ids=JSON.parse(localStorage.getItem('avika_saved_posts_v2_'+uid)||'[]');if(!ids.length){feed.textContent='No saved posts yet.';return}q=q.in('id',ids)}else{const {data,error}=await db.from('follows').select('following_id').eq('follower_id',uid);if(error)throw error;const ids=(data||[]).map(x=>x.following_id);if(!ids.length){feed.textContent='Follow people to see their posts.';return}q=q.in('user_id',ids)}const {data,error}=await q;if(error)throw error;if(token===generation&&currentUser?.id===uid)await renderPosts(feed,data||[])}catch(e){if(token===generation)feed.textContent=e.message}};
+const reels=$('reelsFeed');let observer;if('IntersectionObserver'in window){observer=new IntersectionObserver(entries=>{for(const e of entries){const v=e.target;if(e.isIntersecting&&$('reels').classList.contains('active')){v.muted=true;v.play().catch(()=>{})}else v.pause()}},{threshold:.75});new MutationObserver(()=>{observer.disconnect();reels.querySelectorAll('video').forEach(v=>observer.observe(v))}).observe(reels,{childList:true,subtree:true});}const oldGo=go;go=function(id,...args){if(id!=='reels')reels.querySelectorAll('video').forEach(v=>v.pause());return oldGo(id,...args)};
+})();
+</script>
+<style>
+#avikaHub .hubgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}#avikaHub button{min-height:44px}#avikaHub .hubgrid button{text-align:left}#avikaHub label{display:block;margin:12px 0}#avikaHub textarea{min-height:120px}.avika-compact #feed .post-media{max-height:320px!important}.avika-large #feed .caption,.avika-large .bubble{font-size:17px!important}
+</style>
+<script>
+(()=>{
+const key=k=>'avika_next_'+(currentUser?.id||'guest')+'_'+k;
+const read=(k,d)=>{try{return JSON.parse(localStorage.getItem(key(k)))??d}catch{return d}};
+const write=(k,v)=>localStorage.setItem(key(k),JSON.stringify(v));
+const hub=document.createElement('section');hub.id='avikaHub';hub.className='page';document.querySelector('.shell main').append(hub);
+const button=document.createElement('button');button.className='icon-btn';button.textContent='⚙';button.title='AVIKA tools';button.onclick=()=>{if(!currentUser)return msg('Login first');go('avikaHub');render()};document.querySelector('.top-actions').append(button);
+function apply(){document.body.classList.toggle('avika-compact',read('compact',false));document.body.classList.toggle('avika-large',read('large',false))}
+function render(){hub.innerHTML=`<div class="card"><h2>AVIKA Studio & Settings</h2><p class="small">Personal tools • preferences saved on this device</p><div class="hubgrid"><button class="soft-btn" data-tool="draft">📝 Post drafts</button><button class="soft-btn" data-tool="link">🔗 Share AVIKA</button><button class="soft-btn" data-tool="stats">📊 My activity</button><button class="soft-btn" data-tool="export">📥 Export my posts</button><button class="soft-btn" data-tool="install">📱 Install app</button><button class="soft-btn" data-tool="help">🛡 Safety center</button></div><label><input type="checkbox" id="nextCompact"> Compact feed</label><label><input type="checkbox" id="nextLarge"> Larger text</label><label><input type="checkbox" id="nextData"> Data saver (pause feed videos)</label><button class="soft-btn full" id="nextTheme">Switch theme</button><button class="soft-btn full" id="nextLogout">Log out</button></div><div class="card" id="nextResult">Select a tool above.</div>`;for(const [id,k] of [['nextCompact','compact'],['nextLarge','large'],['nextData','data']]){$(id).checked=read(k,false);$(id).onchange=()=>{write(k,$(id).checked);apply();pause()}}$('nextTheme').onclick=()=>toggleTheme();$('nextLogout').onclick=()=>logout();hub.querySelectorAll('[data-tool]').forEach(b=>b.onclick=()=>tool(b.dataset.tool));apply()}
+function pause(){if(currentUser&&read('data',false))$('feed').querySelectorAll('video').forEach(v=>{v.autoplay=false;v.pause();v.preload='none'})}
+new MutationObserver(pause).observe($('feed'),{childList:true,subtree:true});
+async function tool(t){const r=$('nextResult');r.textContent='';if(!currentUser)return;try{if(t==='draft'){r.innerHTML='<h3>Post draft</h3><textarea class="field" id="nextDraft" placeholder="Write your caption"></textarea><button class="primary" id="nextUse">Use in post</button><button class="soft-btn" id="nextClear">Clear</button><p class="small">Automatically saved on this device.</p>';$('nextDraft').value=read('draft','');$('nextDraft').oninput=()=>write('draft',$('nextDraft').value);$('nextUse').onclick=()=>{$('postCaption').value=$('nextDraft').value;go('create')};$('nextClear').onclick=()=>{$('nextDraft').value='';write('draft','')}}else if(t==='link'){const url=location.origin+location.pathname;if(navigator.share)await navigator.share({title:'AVIKA Social',url});else{await navigator.clipboard.writeText(url);r.textContent='App link copied.'}}else if(t==='stats'){r.textContent='Loading…';const uid=currentUser.id;const queries=[['Posts','posts','user_id'],['Followers','follows','following_id'],['Following','follows','follower_id'],['Likes given','likes','user_id'],['Comments written','comments','user_id']];const results=await Promise.all(queries.map(async ([label,table,col])=>{const {count,error}=await db.from(table).select('*',{count:'exact',head:true}).eq(col,uid);return [label,error?'Unavailable':count]}));if(currentUser?.id!==uid)return;r.innerHTML='<h3>My activity</h3>';for(const [label,value] of results){const p=document.createElement('p');p.textContent=label+': '+value;r.append(p)}}else if(t==='export'){const uid=currentUser.id;const {data,error}=await db.from('posts').select('*').eq('user_id',uid).limit(1000);if(error)throw error;if(currentUser?.id!==uid)return;const url=URL.createObjectURL(new Blob([JSON.stringify(data,null,2)],{type:'application/json'}));const a=document.createElement('a');a.href=url;a.download='avika-my-posts.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);r.textContent='Export requested (up to 1,000 post records, not media files).'}else if(t==='install'){r.textContent='iPhone: Safari → Share → Add to Home Screen. Android or desktop: browser menu → Install app / Add to Home Screen, if available.'}else if(t==='help'){r.textContent='Never share passwords or OTPs. Use Report on inappropriate posts and Block in chat. Avoid posting private information. Contact the app operator for account or content concerns.'}}catch(e){r.textContent=e.message||'Unable to complete action'}}
+const old=go;go=function(id,...args){const result=old(id,...args);apply();return result};
 })();
 </script>
 </body>
