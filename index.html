@@ -262,6 +262,18 @@ body{font-family:"DM Sans",system-ui,sans-serif;letter-spacing:-.012em}
 }
 @media(min-width:681px){#feed>.post{border-radius:18px!important;overflow:hidden!important}#home .story-panel{padding:16px!important}}
 </style>
+<style>
+#callOverlay{padding:0!important;z-index:2147483000;background:#101719;color:white;overflow:hidden; height:100%;height:100dvh}
+#callOverlay .call-panel{position:relative;width:100%;height:100%;max-width:none;padding:0;border:0;border-radius:0;background:#101719;color:white;overflow:hidden;isolation:isolate}
+#callOverlay .call-panel>div:nth-of-type(1){position:absolute!important;inset:0;z-index:0}
+#remoteCallVideo{position:absolute;inset:0;width:100%;height:100%;max-height:none;border-radius:0;object-fit:cover;background:#101719}
+#localCallVideo{position:absolute;top:calc(env(safe-area-inset-top,0px) + 100px);right:16px;bottom:auto;width:clamp(90px,27vw,160px);height:auto;aspect-ratio:3/4;border:2px solid #ffffffaa;border-radius:16px;background:#263238;box-shadow:0 4px 20px #0007;object-fit:cover}
+#callTitle,#callState,#avikaCallTimer{position:absolute;z-index:2;left:12px;right:12px;margin:0;color:white;text-shadow:0 2px 8px #000;pointer-events:none}
+#callTitle{top:calc(env(safe-area-inset-top,0px) + 18px);font-size:22px}#callState{top:calc(env(safe-area-inset-top,0px) + 49px);font-size:13px}#avikaCallTimer{top:calc(env(safe-area-inset-top,0px) + 70px);font-size:14px;font-variant-numeric:tabular-nums}
+#callOverlay .chat-tools{position:absolute;z-index:3;bottom:0;left:0;right:0;margin:0;padding:40px 12px calc(22px + env(safe-area-inset-bottom,0px));display:flex;justify-content:center;align-items:center;gap:10px;flex-wrap:wrap;background:linear-gradient(transparent,#000c)}
+#callOverlay .chat-tools button{flex:0 0 auto;min-width:0;width:58px;height:58px;border-radius:50%;padding:4px;background:#263238e8;color:white;border:1px solid #ffffff22;font-size:11px;line-height:1.1;box-shadow:none}#callOverlay .chat-tools button span{display:block;font-size:21px;margin-bottom:3px}#callOverlay .chat-tools button:last-child{background:#e53935}#callOverlay #acceptCallBtn{background:#168b50}#callOverlay.voice-only #localCallVideo{display:none}#callOverlay.voice-only #avikaCameraBtn,#callOverlay.voice-only #avikaFlipBtn{display:none}
+#callOverlay.voice-only #remoteCallVideo{opacity:0}#callOverlay.voice-only .call-panel{background:radial-gradient(circle at center,#31564d,#101719 70%)}
+</style>
 </head>
 <body>
 <header class="topbar">
@@ -347,7 +359,7 @@ body{font-family:"DM Sans",system-ui,sans-serif;letter-spacing:-.012em}
  </nav>
 </div>
 
-<div class="call-overlay" id="callOverlay"><div class="call-panel"><h2 id="callTitle">AVIKA Call</h2><p id="callState" class="muted">Connecting…</p><div style="position:relative"><video id="remoteCallVideo" class="call-video" autoplay playsinline></video><video id="localCallVideo" class="call-mini" autoplay playsinline muted></video></div><div class="chat-tools"><button class="primary" id="acceptCallBtn" onclick="acceptCall()" style="display:none">Accept</button><button class="soft-btn" onclick="toggleMic()">Mute / Unmute</button><button class="soft-btn" onclick="document.getElementById('remoteCallVideo').play().catch(e=>msg(e.message))">Enable sound</button><button class="soft-btn" onclick="avikaCallCamera()">Camera on/off</button><button class="soft-btn" onclick="avikaFlipCallCamera()">Flip camera</button><button class="soft-btn" onclick="endCall()">Reject / End call</button></div></div></div><div id="storyModal" class="modal hidden" onclick="if(event.target===this)closeStory()"><div class="modal-box"><button class="close" onclick="closeStory()">✕</button><div id="storyContent" style="clear:both;text-align:center;padding-top:12px"></div><div id="storyViewers" class="small" style="padding-top:12px"></div></div></div>
+<div class="call-overlay" id="callOverlay"><div class="call-panel"><h2 id="callTitle">AVIKA Call</h2><p id="callState" class="muted">Connecting…</p><p id="avikaCallTimer" hidden>00:00</p><div style="position:relative"><video id="remoteCallVideo" class="call-video" autoplay playsinline></video><video id="localCallVideo" class="call-mini" autoplay playsinline muted></video></div><div class="chat-tools"><button class="primary" id="acceptCallBtn" onclick="acceptCall()" style="display:none"><span>☎</span>Accept</button><button class="soft-btn" onclick="toggleMic()"><span>🎙</span>Mic</button><button class="soft-btn" onclick="document.getElementById('remoteCallVideo').play().catch(e=>msg(e.message))"><span>🔊</span>Sound</button><button class="soft-btn" id="avikaCameraBtn" onclick="avikaCallCamera()"><span>📹</span>Camera</button><button class="soft-btn" id="avikaFlipBtn" onclick="avikaFlipCallCamera()"><span>↻</span>Flip</button><button class="soft-btn" onclick="endCall()"><span>☎</span>End</div></div></div><div id="storyModal" class="modal hidden" onclick="if(event.target===this)closeStory()"><div class="modal-box"><button class="close" onclick="closeStory()">✕</button><div id="storyContent" style="clear:both;text-align:center;padding-top:12px"></div><div id="storyViewers" class="small" style="padding-top:12px"></div></div></div>
 
 <script>
 const SUPABASE_URL="https://csarrgheuzybigifblny.supabase.co";
@@ -1159,6 +1171,9 @@ window.avikaMessagePopup=async function(m){if(!currentUser||m.receiver_id!==curr
 async function check(){if(busy)return;const user=currentUser?.id;if(!user){uid=null;known.clear();ready=false;badge.hidden=true;toast.hidden=true;return}if(uid!==user){uid=user;known.clear();ready=false;toast.hidden=true}busy=true;try{const {data,error,count}=await db.from('dm_messages').select('id,sender_id,receiver_id,content,created_at',{count:'exact'}).eq('receiver_id',user).eq('is_read',false).order('created_at',{ascending:false}).limit(50);if(error||currentUser?.id!==user)return;badge.hidden=!count;badge.textContent='✉ '+(count>99?'99+':count||0);badge.setAttribute('aria-label',(count||0)+' unread messages');if(ready){for(const m of [...data].reverse()){if(!known.has(m.id)){if(avikaChatVisible(m.sender_id)){known.add(m.id);await refreshMessages()}else await avikaMessagePopup(m)}}}else{data.forEach(m=>known.add(m.id));ready=true}}finally{busy=false}}
 setInterval(()=>check().catch(console.warn),2500);const oldGo=go;go=function(id,btn){oldGo(id,btn);if(id==='chat'&&chatUser&&avikaChatVisible(chatUser.id))refreshMessages().then(check);else check()};document.addEventListener('visibilitychange',()=>{if(!document.hidden){if(chatUser&&avikaChatVisible(chatUser.id))refreshMessages().then(check);else check()}});const oldLogout=logout;logout=async function(){toast.hidden=true;badge.hidden=true;await oldLogout();check()};check();
 })();
+</script>
+<script>
+(()=>{const overlay=document.getElementById('callOverlay'),timer=document.getElementById('avikaCallTimer');let last=null,started=0;function update(){const call=activeCall;if(call!==last){last=call;started=0;}overlay.classList.toggle('voice-only',!!call&&!call.video);if(call&&peer?.connectionState==='connected'&&!started)started=Date.now();timer.hidden=!call||!started;if(started&&call){const n=Math.floor((Date.now()-started)/1000);timer.textContent=String(Math.floor(n/60)).padStart(2,'0')+':'+String(n%60).padStart(2,'0');}else timer.textContent='00:00';}new MutationObserver(update).observe(overlay,{attributes:true,attributeFilter:['class']});setInterval(update,500);})();
 </script>
 </body>
 </html>
