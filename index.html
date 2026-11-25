@@ -347,7 +347,7 @@ body{font-family:"DM Sans",system-ui,sans-serif;letter-spacing:-.012em}
  </nav>
 </div>
 
-<div class="call-overlay" id="callOverlay"><div class="call-panel"><h2 id="callTitle">AVIKA Call</h2><p id="callState" class="muted">Connecting…</p><div style="position:relative"><video id="remoteCallVideo" class="call-video" autoplay playsinline></video><video id="localCallVideo" class="call-mini" autoplay playsinline muted></video></div><div class="chat-tools"><button class="primary" id="acceptCallBtn" onclick="acceptCall()" style="display:none">Accept</button><button class="soft-btn" onclick="toggleMic()">Mute / Unmute</button><button class="soft-btn" onclick="endCall()">Reject / End call</button></div></div></div><div id="storyModal" class="modal hidden" onclick="if(event.target===this)closeStory()"><div class="modal-box"><button class="close" onclick="closeStory()">✕</button><div id="storyContent" style="clear:both;text-align:center;padding-top:12px"></div><div id="storyViewers" class="small" style="padding-top:12px"></div></div></div>
+<div class="call-overlay" id="callOverlay"><div class="call-panel"><h2 id="callTitle">AVIKA Call</h2><p id="callState" class="muted">Connecting…</p><div style="position:relative"><video id="remoteCallVideo" class="call-video" autoplay playsinline></video><video id="localCallVideo" class="call-mini" autoplay playsinline muted></video></div><div class="chat-tools"><button class="primary" id="acceptCallBtn" onclick="acceptCall()" style="display:none">Accept</button><button class="soft-btn" onclick="toggleMic()">Mute / Unmute</button><button class="soft-btn" onclick="document.getElementById('remoteCallVideo').play().catch(e=>msg(e.message))">Enable sound</button><button class="soft-btn" onclick="avikaCallCamera()">Camera on/off</button><button class="soft-btn" onclick="avikaFlipCallCamera()">Flip camera</button><button class="soft-btn" onclick="endCall()">Reject / End call</button></div></div></div><div id="storyModal" class="modal hidden" onclick="if(event.target===this)closeStory()"><div class="modal-box"><button class="close" onclick="closeStory()">✕</button><div id="storyContent" style="clear:both;text-align:center;padding-top:12px"></div><div id="storyViewers" class="small" style="padding-top:12px"></div></div></div>
 
 <script>
 const SUPABASE_URL="https://csarrgheuzybigifblny.supabase.co";
@@ -476,40 +476,64 @@ async function connectCallChannel(){
  activeCall={userId:p.from,video:p.video,incoming:true};pendingOffer=p.offer;callCandidates=[];
  $('callOverlay').classList.add('show');$('callTitle').textContent='Incoming '+(p.video?'video':'voice')+' call';$('callState').textContent='Incoming call…';$('acceptCallBtn').style.display='inline-block';
  }else if(activeCall&&p.from===activeCall.userId){
- try{if(p.type==='answer'&&peer){await peer.setRemoteDescription(p.answer);await flushCandidates();$('callState').textContent='Connected / connecting…'}
+ try{if(p.type==='answer'&&peer){await peer.setRemoteDescription(p.answer);await flushCandidates();if(peer.connectionState!=='connected')$('callState').textContent='Connecting media…'}
  else if(p.type==='ice'){if(peer?.remoteDescription)await peer.addIceCandidate(p.candidate);else callCandidates.push(p.candidate)}
  else if(p.type==='hangup'||p.type==='busy'){msg(p.type==='busy'?'User is busy':'Call ended');await closeCall(false)}}catch(e){msg('Call signaling: '+e.message)}
  }
  }).subscribe();
 }
-async function sendSignal(to,payload){const channel=db.channel('avika-call-'+to);await new Promise(resolve=>channel.subscribe(s=>{if(s==='SUBSCRIBED')resolve()}));const result=await channel.send({type:'broadcast',event:'signal',payload:{...payload,from:currentUser.id,to}});await db.removeChannel(channel);if(result!=='ok')throw Error('Signaling failed: '+result)}
-async function makePeer(){
- peer=new RTCPeerConnection(rtcConfig);
- peer.onicecandidate=async e=>{if(e.candidate&&activeCall)try{await sendSignal(activeCall.userId,{type:'ice',candidate:e.candidate.toJSON()})}catch(err){console.warn(err)}};
- peer.ontrack=e=>{$('remoteCallVideo').srcObject=e.streams[0];$('callState').textContent='Call connected'};
- peer.onconnectionstatechange=()=>{if(peer)$('callState').textContent='Connection: '+peer.connectionState};
- localCallStream=await navigator.mediaDevices.getUserMedia({audio:true,video:activeCall.video});
- $('localCallVideo').srcObject=localCallStream;
- localCallStream.getTracks().forEach(t=>peer.addTrack(t,localCallStream));
+// Keep signaling ordered and avoid competing subscriptions to the same topic.
+let signalQueue=Promise.resolve();
+function sendSignal(to,payload){
+ const from=currentUser.id;
+ const job=signalQueue.catch(()=>{}).then(async()=>{
+ const channel=db.channel('avika-call-'+to,{config:{broadcast:{ack:true}}});
+ try{
+ await new Promise((resolve,reject)=>{const timer=setTimeout(()=>reject(Error('Signaling timeout')),10000);channel.subscribe(status=>{if(status==='SUBSCRIBED'){clearTimeout(timer);resolve()}else if(['CHANNEL_ERROR','TIMED_OUT','CLOSED'].includes(status)){clearTimeout(timer);reject(Error(status))}})});
+ const result=await channel.send({type:'broadcast',event:'signal',payload:{...payload,from,to}});
+ if(result!=='ok')throw Error('Signaling failed: '+result);
+ }finally{await db.removeChannel(channel)}
+ });signalQueue=job;return job;
 }
-async function flushCandidates(){for(const c of callCandidates)await peer.addIceCandidate(c);callCandidates=[]}
+async function makePeer(){
+ const call=activeCall;
+ $('callState').textContent='Preparing secure TURN connection…';
+ const {data,error}=await db.functions.invoke('avika-turn',{body:{}});
+ if(error||!Array.isArray(data?.iceServers)||!data.iceServers.some(x=>[x.urls].flat().some(u=>typeof u==='string'&&/^turns?:/.test(u))))throw Error('TURN unavailable — check avika-turn deployment and secrets');
+ if(activeCall!==call)throw Error('Call cancelled');
+ const pc=new RTCPeerConnection({iceServers:[...rtcConfig.iceServers,...data.iceServers]});peer=pc;
+ call.outgoingIce=[];call.descriptionSent=false;
+ const remote=new MediaStream();const player=$('remoteCallVideo');player.muted=false;player.srcObject=remote;
+ player.onclick=()=>player.play().catch(()=>msg('Tap to enable call audio'));
+ pc.onicecandidate=e=>{if(!e.candidate||activeCall!==call)return;const candidate=e.candidate.toJSON();if(!call.descriptionSent)call.outgoingIce.push(candidate);else sendSignal(call.userId,{type:'ice',candidate}).catch(e=>msg(e.message))};
+ pc.ontrack=e=>{if(activeCall!==call)return;if(!remote.getTracks().some(t=>t.id===e.track.id))remote.addTrack(e.track);player.play().catch(()=>{$('callState').textContent='Tap call video to enable audio'});};
+ pc.onconnectionstatechange=()=>{if(peer!==pc)return;$('callState').textContent=pc.connectionState==='failed'?'Connection failed — end call and retry':pc.connectionState==='connected'?'Call connected':'Connection: '+pc.connectionState;};
+ stopCamera();
+ const stream=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:true,noiseSuppression:true},video:call.video});
+ if(activeCall!==call){stream.getTracks().forEach(t=>t.stop());throw Error('Call cancelled')}
+ localCallStream=stream;$('localCallVideo').srcObject=stream;$('localCallVideo').muted=true;$('localCallVideo').play().catch(()=>{});
+ stream.getTracks().forEach(t=>pc.addTrack(t,stream));
+}
+async function sendDescription(call,payload){await sendSignal(call.userId,payload);if(activeCall!==call)return;call.descriptionSent=true;for(const candidate of call.outgoingIce.splice(0))sendSignal(call.userId,{type:'ice',candidate}).catch(e=>msg(e.message));}
+async function flushCandidates(){const pc=peer;for(const c of callCandidates.splice(0)){if(peer!==pc)return;try{await pc.addIceCandidate(c)}catch(e){console.warn('ICE candidate rejected',e.message)}}}
 async function startCall(video){
  if(!chatUser||!currentUser)return msg('Choose a person first');if(activeCall)return msg('A call is already active');
- activeCall={userId:chatUser.id,video,incoming:false};$('callOverlay').classList.add('show');$('callTitle').textContent=video?'Video call':'Voice call';$('callState').textContent='Calling…';$('acceptCallBtn').style.display='none';
- try{await makePeer();const offer=await peer.createOffer();await peer.setLocalDescription(offer);await sendSignal(chatUser.id,{type:'offer',offer:peer.localDescription.toJSON(),video})}
- catch(e){msg('Call: '+e.message);await closeCall(false)}
+ const call={userId:chatUser.id,video,incoming:false};activeCall=call;callCandidates=[];$('callOverlay').classList.add('show');$('callTitle').textContent=video?'Video call':'Voice call';$('callState').textContent='Calling…';$('acceptCallBtn').style.display='none';
+ try{await makePeer();if(activeCall!==call)return;await peer.setLocalDescription(await peer.createOffer());await sendDescription(call,{type:'offer',offer:peer.localDescription.toJSON(),video})}catch(e){if(activeCall===call){msg('Call: '+e.message);await closeCall(false)}}
 }
-async function acceptCall(){if(!activeCall||!pendingOffer)return;
+async function acceptCall(){if(!activeCall||!pendingOffer)return;const call=activeCall;const offer=pendingOffer;pendingOffer=null;
  $('acceptCallBtn').style.display='none';$('callState').textContent='Connecting…';
- try{await makePeer();await peer.setRemoteDescription(pendingOffer);await flushCandidates();const answer=await peer.createAnswer();await peer.setLocalDescription(answer);await sendSignal(activeCall.userId,{type:'answer',answer:peer.localDescription.toJSON()});pendingOffer=null}
- catch(e){msg('Call: '+e.message);await endCall()}
+ try{await makePeer();if(activeCall!==call)return;await peer.setRemoteDescription(offer);await flushCandidates();await peer.setLocalDescription(await peer.createAnswer());await sendDescription(call,{type:'answer',answer:peer.localDescription.toJSON()})}catch(e){if(activeCall===call){$('callState').textContent='Call error: '+e.message+' — end call and retry';msg('Call: '+e.message)}}
 }
 async function closeCall(notify){const target=activeCall?.userId;activeCall=null;pendingOffer=null;callCandidates=[];
- if(peer){peer.close();peer=null}if(localCallStream){localCallStream.getTracks().forEach(t=>t.stop());localCallStream=null}
+ if(peer){peer.onconnectionstatechange=null;peer.onicecandidate=null;peer.close();peer=null}if(localCallStream){localCallStream.getTracks().forEach(t=>t.stop());localCallStream=null}
  $('remoteCallVideo').srcObject=null;$('localCallVideo').srcObject=null;$('callOverlay').classList.remove('show');
  if(notify&&target)try{await sendSignal(target,{type:'hangup'})}catch(e){console.warn(e)}
 }
 async function endCall(){await closeCall(true)}
+function avikaCallCamera(){const t=localCallStream?.getVideoTracks()[0];if(!t)return msg('Video call only');t.enabled=!t.enabled;msg(t.enabled?'Camera on':'Camera off')}
+async function avikaFlipCallCamera(){const pc=peer,stream=localCallStream,old=stream?.getVideoTracks()[0];if(!old||!pc)return msg('Video call only');const facing=old.getSettings().facingMode==='environment'?'user':'environment';let next;try{next=await navigator.mediaDevices.getUserMedia({video:{facingMode:{exact:facing}},audio:false});if(peer!==pc)throw Error('Call ended');const t=next.getVideoTracks()[0];const sender=pc.getSenders().find(x=>x.track===old);if(!sender)throw Error('Camera unavailable');t.enabled=old.enabled;await sender.replaceTrack(t);stream.removeTrack(old);old.stop();stream.addTrack(t);$('localCallVideo').srcObject=stream;}catch(e){next?.getTracks().forEach(t=>t.stop());msg('Camera switch: '+e.message)}}
+
 const previousLogout=logout;
 logout=async function(){await closeCall(true);if(chatRealtime)await db.removeChannel(chatRealtime);if(inboxRealtime)await db.removeChannel(inboxRealtime);if(callChannel)await db.removeChannel(callChannel);await previousLogout()};
 // FaceDetector is experimental: enable only where browser provides it.
