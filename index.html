@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#090812">
 <meta name="description" content="AVIKA — connect, share and discover">
-<link rel="manifest" href="manifest.webmanifest"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><title>AVIKA — Moments worth sharing</title>
+<link rel="manifest" href="manifest.json"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><title>AVIKA — Moments worth sharing</title>
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="AVIKA">
@@ -1174,6 +1174,13 @@ setInterval(()=>check().catch(console.warn),2500);const oldGo=go;go=function(id,
 </script>
 <script>
 (()=>{const overlay=document.getElementById('callOverlay'),timer=document.getElementById('avikaCallTimer');let last=null,started=0;function update(){const call=activeCall;if(call!==last){last=call;started=0;}overlay.classList.toggle('voice-only',!!call&&!call.video);if(call&&peer?.connectionState==='connected'&&!started)started=Date.now();timer.hidden=!call||!started;if(started&&call){const n=Math.floor((Date.now()-started)/1000);timer.textContent=String(Math.floor(n/60)).padStart(2,'0')+':'+String(n%60).padStart(2,'0');}else timer.textContent='00:00';}new MutationObserver(update).observe(overlay,{attributes:true,attributeFilter:['class']});setInterval(update,500);})();
+</script>
+<script>
+// AVIKA background push, existing call transport unchanged.
+async function avikaPushRequest(body){const {data,error}=await db.functions.invoke('avika-push',{body});if(error)throw error;return data;}
+enableAlerts=async function(){try{if(!currentUser)throw Error('Login first');if(!('serviceWorker' in navigator)||!('PushManager' in window)||!('Notification' in window))throw Error('On iPhone install AVIKA on Home Screen first');const permission=await Notification.requestPermission();if(permission!=='granted')throw Error('Notification permission not granted');const reg=await navigator.serviceWorker.register('./sw.js');await navigator.serviceWorker.ready;const {publicKey}=await avikaPushRequest({action:'key'});const raw=atob(publicKey.replace(/-/g,'+').replace(/_/g,'/')+'='.repeat((4-publicKey.length%4)%4));const key=Uint8Array.from(raw,c=>c.charCodeAt(0));let sub=await reg.pushManager.getSubscription();if(sub&&sub.options.applicationServerKey&&String(new Uint8Array(sub.options.applicationServerKey))!==String(key)){await sub.unsubscribe();sub=null;}if(!sub)sub=await reg.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:key});await avikaPushRequest({action:'subscribe',subscription:sub.toJSON()});msg('Background notifications enabled');}catch(e){msg('Push setup: '+e.message)}};
+const avikaPushLogout=logout;logout=async function(){try{const reg=await navigator.serviceWorker.getRegistration();const sub=await reg?.pushManager.getSubscription();if(sub){await avikaPushRequest({action:'unsubscribe',endpoint:sub.endpoint});await sub.unsubscribe();}}catch(e){msg('Could not disable notifications; retry logout while online');return;}await avikaPushLogout();};
+const avikaPushSignal=sendSignal;sendSignal=function(to,payload){if(payload.type==='offer')avikaPushRequest({action:'call',target:to,video:!!payload.video}).catch(console.warn);return avikaPushSignal(to,payload);};
 </script>
 </body>
 </html>
